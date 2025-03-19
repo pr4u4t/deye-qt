@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+deye
+.qmake.stash
+result.txt
