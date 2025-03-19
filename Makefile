@@ -52,8 +52,13 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = main.cpp 
-OBJECTS       = main.o
+SOURCES       = utils.cpp \
+		deye.cpp \
+		main.cpp moc_deye.cpp
+OBJECTS       = utils.o \
+		deye.o \
+		main.o \
+		moc_deye.o
 DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt6/mkspecs/common/unix.conf \
 		/usr/lib/qt6/mkspecs/common/linux.conf \
@@ -126,7 +131,11 @@ DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt6/mkspecs/features/exceptions.prf \
 		/usr/lib/qt6/mkspecs/features/yacc.prf \
 		/usr/lib/qt6/mkspecs/features/lex.prf \
-		deye.pro main.h main.cpp
+		deye.pro utils.h \
+		deye.h \
+		main.h utils.cpp \
+		deye.cpp \
+		main.cpp
 QMAKE_TARGET  = deye
 DESTDIR       = 
 TARGET        = deye
@@ -310,8 +319,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents main.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents utils.h deye.h main.h $(DISTDIR)/
+	$(COPY_FILE) --parents utils.cpp deye.cpp main.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -343,8 +352,15 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/qt6/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/qt6/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all:
+compiler_moc_header_make_all: moc_deye.cpp
 compiler_moc_header_clean:
+	-$(DEL_FILE) moc_deye.cpp
+moc_deye.cpp: deye.h \
+		utils.h \
+		moc_predefs.h \
+		/usr/lib/qt6/libexec/moc
+	/usr/lib/qt6/libexec/moc $(DEFINES) --include /homeassistant/deye/moc_predefs.h -I/usr/lib/qt6/mkspecs/linux-g++ -I/homeassistant/deye -I/homeassistant/deye -I/usr/include/qt6 -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtSerialBus -I/usr/include/qt6/QtNetwork -I/usr/include/qt6/QtSerialPort -I/usr/include/qt6/QtCore -I/usr/include/c++/14.2.0 -I/usr/include/c++/14.2.0/aarch64-alpine-linux-musl -I/usr/include/c++/14.2.0/backward -I/usr/include -I/usr/lib/gcc/aarch64-alpine-linux-musl/14.2.0/include deye.h -o moc_deye.cpp
+
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
@@ -355,12 +371,24 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_predefs_clean 
+compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean 
 
 ####### Compile
 
-main.o: main.cpp 
+utils.o: utils.cpp utils.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o utils.o utils.cpp
+
+deye.o: deye.cpp deye.h \
+		utils.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o deye.o deye.cpp
+
+main.o: main.cpp main.h \
+		deye.h \
+		utils.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
+
+moc_deye.o: moc_deye.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_deye.o moc_deye.cpp
 
 ####### Install
 

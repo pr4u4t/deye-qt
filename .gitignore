@@ -34,3 +34,4 @@
 deye
 .qmake.stash
 result.txt
+moc_*
