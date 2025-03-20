@@ -7,25 +7,158 @@ views:
         title: Battery Status
         entities:
           - sensor.battery_capacity
+          - sensor.battery_soc
           - sensor.battery_voltage
           - sensor.battery_power
           - sensor.battery_current
+          - sensor.battery_temperature
+          - sensor.daily_battery_charge
+          - sensor.daily_battery_discharge
+          - sensor.total_battery_charge
+          - sensor.total_battery_discharge
 
       - type: entities
-        title: Grid & PV Status
+        title: Grid Status
         entities:
           - sensor.grid_voltage_l1
           - sensor.grid_voltage_l2
           - sensor.grid_voltage_l3
-          - sensor.pv1_voltage
-          - sensor.pv1_current
-          - sensor.pv2_voltage
-          - sensor.pv2_current
+          - sensor.current_l1
+          - sensor.current_l2
+          - sensor.current_l3
+          - sensor.total_grid_power
+          - sensor.gridsell_power
+          - sensor.daily_energy_bought
+          - sensor.daily_energy_sold
+          - sensor.total_energy_bought
+          - sensor.total_energy_sold
 
       - type: entities
-        title: Energy Usage
+        title: Solar Production
         entities:
-          - sensor.total_grid_power
+          - sensor.pv1_voltage
+          - sensor.pv1_current
+          - sensor.pv1_input_power
+          - sensor.pv2_voltage
+          - sensor.pv2_current
+          - sensor.pv2_power
+          - sensor.daily_production
+          - sensor.total_production
+
+      - type: entities
+        title: Load Consumption
+        entities:
+          - sensor.load_voltage_l1
+          - sensor.load_voltage_l2
+          - sensor.load_voltage_l3
+          - sensor.load_l1_power
+          - sensor.load_l2_power
+          - sensor.load_l3_power
           - sensor.total_load_power
+          - sensor.day_load_power
+          - sensor.daily_load_consumption
+          - sensor.total_load_consumption
+
+      - type: entities
+        title: Inverter Status
+        entities:
+          - sensor.inverter_l1_power
+          - sensor.inverter_l2_power
+          - sensor.inverter_l3_power
+          - sensor.ac_temperature
+          - sensor.dc_temperature
           - sensor.total_active_in_power
 
+      - type: entities
+        title: CT Sensors
+        entities:
+          - sensor.external_ct_l1_power
+          - sensor.external_ct_l2_power
+          - sensor.external_ct_l3_power
+          - sensor.internal_ct_l1_power
+          - sensor.internal_ct_l2_power
+          - sensor.internal_ct_l3_power
+          - sensor.gen_port_power
+
+  - title: Power Flow
+    path: power-flow
+    cards:
+      - type: custom:power-flow-card
+        title: Power Flow
+        entities:
+          grid:
+            entity: sensor.total_grid_power
+            consumption_entity: sensor.daily_energy_bought
+            production_entity: sensor.daily_energy_sold
+          solar:
+            entity: sensor.pv1_input_power
+            secondary_entity: sensor.pv2_power
+            production_entity: sensor.daily_production
+          battery:
+            entity: sensor.battery_power
+            state_of_charge_entity: sensor.battery_soc
+          home:
+            entity: sensor.total_load_power
+            consumption_entity: sensor.daily_load_consumption
+
+      - type: statistics-graph
+        title: Daily Production & Consumption
+        entities:
+          - sensor.daily_production
+          - sensor.daily_load_consumption
+          - sensor.daily_energy_bought
+          - sensor.daily_energy_sold
+        period: day
+        stat_types:
+          - mean
+          - min
+          - max
+
+  - title: Historical Data
+    path: historical-data
+    cards:
+      - type: statistics-graph
+        title: Battery Performance
+        entities:
+          - sensor.battery_soc
+          - sensor.battery_power
+        period: day
+        stat_types:
+          - mean
+        chart_type: line
+
+      - type: history-graph
+        title: Solar Production History
+        entities:
+          - sensor.pv1_input_power
+          - sensor.pv2_power
+          - sensor.daily_production
+        hours_to_show: 24
+
+      - type: energy-distribution
+        title: Energy Distribution
+        entities:
+          - entity: sensor.daily_production
+            name: Solar Production
+          - entity: sensor.daily_energy_bought
+            name: Grid Import
+          - entity: sensor.daily_battery_discharge
+            name: Battery Discharge
+          - entity: sensor.daily_load_consumption
+            name: Home Consumption
+          - entity: sensor.daily_energy_sold
+            name: Grid Export
+          - entity: sensor.daily_battery_charge
+            name: Battery Charge
+
+      - type: statistics-graph
+        title: Monthly Energy Trends
+        entities:
+          - sensor.total_production
+          - sensor.total_load_consumption
+          - sensor.total_energy_bought
+          - sensor.total_energy_sold
+        period: month
+        stat_types:
+          - sum
+        chart_type: bar

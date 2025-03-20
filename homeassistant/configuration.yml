@@ -1,6 +1,6 @@
 sensor:
   - platform: rest
-    name: "Deye Monitor"
+    name: "deye_monitor"
     resource: "http://localhost:8080/data"  # Replace with your API URL
     scan_interval: 10  # Update every 10 seconds
     method: GET
@@ -65,85 +65,264 @@ sensor:
       ac_temperature:
         friendly_name: "AC Temperature"
         unit_of_measurement: "°C"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'AC Temperature') | float / 10 }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'AC Temperature') | float / 10 }}"
 
       battery_capacity:
         friendly_name: "Battery Capacity"
         unit_of_measurement: "%"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery Capacity') }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Battery Capacity') }}"
 
       battery_current:
         friendly_name: "Battery Current"
         unit_of_measurement: "mA"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery Current') }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Battery Current') }}"
 
       battery_power:
         friendly_name: "Battery Power"
         unit_of_measurement: "W"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery Power') }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Battery Power') }}"
 
       battery_soc:
         friendly_name: "Battery SOC"
         unit_of_measurement: "%"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery SOC') }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Battery SOC') }}"
 
       battery_temperature:
         friendly_name: "Battery Temperature"
         unit_of_measurement: "°C"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery Temperature') | float / 10 }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Battery Temperature') | float / 10 }}"
 
       battery_voltage:
         friendly_name: "Battery Voltage"
         unit_of_measurement: "V"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery Voltage') | float / 10 }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Battery Voltage') | float / 10 }}"
+
+      current_l1:
+        friendly_name: "Current L1"
+        unit_of_measurement: "A"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Current L1') | float / 10 }}"
+
+      current_l2:
+        friendly_name: "Current L2"
+        unit_of_measurement: "A"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Current L2') | float / 10 }}"
+
+      current_l3:
+        friendly_name: "Current L3"
+        unit_of_measurement: "A"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Current L3') | float / 10 }}"
+
+      dc_temperature:
+        friendly_name: "DC Temperature"
+        unit_of_measurement: "°C"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'DC Temperature') | float / 10 }}"
+
+      daily_battery_charge:
+        friendly_name: "Daily Battery Charge"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Daily Battery Charge') | float / 100 }}"
+
+      daily_battery_discharge:
+        friendly_name: "Daily Battery Discharge"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Daily Battery Discharge') | float / 100 }}"
+
+      daily_energy_bought:
+        friendly_name: "Daily Energy Bought"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Daily Energy Bought') | float / 100 }}"
+
+      daily_energy_sold:
+        friendly_name: "Daily Energy Sold"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Daily Energy Sold') | float / 100 }}"
+
+      daily_load_consumption:
+        friendly_name: "Daily Load Consumption"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Daily Load Consumption') | float / 100 }}"
+
+      daily_production:
+        friendly_name: "Daily Production"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Daily Production') | float / 100 }}"
+
+      day_load_power:
+        friendly_name: "Day Load Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Day Load Power') }}"
+
+      external_ct_l1_power:
+        friendly_name: "External CT L1 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'External CT L1 Power') }}"
+
+      external_ct_l2_power:
+        friendly_name: "External CT L2 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'External CT L2 Power') }}"
+
+      external_ct_l3_power:
+        friendly_name: "External CT L3 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'External CT L3 Power') }}"
+
+      gen_port_power:
+        friendly_name: "Gen Port Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Gen Port Power') }}"
 
       grid_voltage_l1:
         friendly_name: "Grid Voltage L1"
         unit_of_measurement: "V"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Grid Voltage L1') | float / 10 }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Grid Voltage L1') | float / 10 }}"
 
       grid_voltage_l2:
         friendly_name: "Grid Voltage L2"
         unit_of_measurement: "V"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Grid Voltage L2') | float / 10 }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Grid Voltage L2') | float / 10 }}"
 
       grid_voltage_l3:
         friendly_name: "Grid Voltage L3"
         unit_of_measurement: "V"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Grid Voltage L3') | float / 10 }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Grid Voltage L3') | float / 10 }}"
+
+      gridsell_power:
+        friendly_name: "GridSell Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'GridSell Power') }}"
+
+      internal_ct_l1_power:
+        friendly_name: "Internal CT L1 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Internal CT L1 Power') }}"
+
+      internal_ct_l2_power:
+        friendly_name: "Internal CT L2 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Internal CT L2 Power') }}"
+
+      internal_ct_l3_power:
+        friendly_name: "Internal CT L3 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Internal CT L3 Power') }}"
+
+      inverter_l1_power:
+        friendly_name: "Inverter L1 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Inverter L1 Power') }}"
+
+      inverter_l2_power:
+        friendly_name: "Inverter L2 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Inverter L2 Power') }}"
+
+      inverter_l3_power:
+        friendly_name: "Inverter L3 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Inverter L3 Power') }}"
+
+      load_l1_power:
+        friendly_name: "Load L1 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Load L1 Power') }}"
+
+      load_l2_power:
+        friendly_name: "Load L2 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Load L2 Power') }}"
+
+      load_l3_power:
+        friendly_name: "Load L3 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Load L3 Power') }}"
+
+      load_voltage_l1:
+        friendly_name: "Load Voltage L1"
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Load Voltage L1') | float / 10 }}"
+
+      load_voltage_l2:
+        friendly_name: "Load Voltage L2"
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Load Voltage L2') | float / 10 }}"
+
+      load_voltage_l3:
+        friendly_name: "Load Voltage L3"
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Load Voltage L3') | float / 10 }}"
 
       pv1_voltage:
         friendly_name: "PV1 Voltage"
         unit_of_measurement: "V"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'PV1 Voltage') | float / 10 }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'PV1 Voltage') | float / 10 }}"
 
       pv1_current:
         friendly_name: "PV1 Current"
         unit_of_measurement: "A"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'PV1 Current') | float / 10 }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'PV1 Current') | float / 10 }}"
+
+      pv1_input_power:
+        friendly_name: "PV1 Input Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'PV1 input power') }}"
 
       pv2_voltage:
         friendly_name: "PV2 Voltage"
         unit_of_measurement: "V"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'PV2 Voltage') | float / 10 }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'PV2 Voltage') | float / 10 }}"
 
       pv2_current:
         friendly_name: "PV2 Current"
         unit_of_measurement: "A"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'PV2 Current') | float / 10 }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'PV2 Current') | float / 10 }}"
+
+      pv2_power:
+        friendly_name: "PV2 Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'PV2 Power') }}"
+
+      total_battery_charge:
+        friendly_name: "Total Battery Charge"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Total Battery Charge') | float / 100 }}"
+
+      total_battery_discharge:
+        friendly_name: "Total Battery Discharge"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Total Battery Discharge') | float / 100 }}"
+
+      total_energy_bought:
+        friendly_name: "Total Energy Bought"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Total Energy Bought') | float / 100 }}"
+
+      total_energy_sold:
+        friendly_name: "Total Energy Sold"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Total Energy Sold') | float / 100 }}"
 
       total_grid_power:
         friendly_name: "Total Grid Power"
         unit_of_measurement: "W"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Total Grid Power') }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Total Grid Power') }}"
+
+      total_load_consumption:
+        friendly_name: "Total Load Consumption"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Total Load Consumption') | float / 100 }}"
 
       total_load_power:
         friendly_name: "Total Load Power"
         unit_of_measurement: "W"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Total Load Power') }}"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Total Load Power') }}"
+
+      total_production:
+        friendly_name: "Total Production"
+        unit_of_measurement: "kWh"
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Total Production') | float / 100 }}"
 
       total_active_in_power:
         friendly_name: "Total Active IN Power"
         unit_of_measurement: "W"
-        value_template: "{{ state_attr('sensor.energy_monitor', 'Total active IN Power') }}"
-
+        value_template: "{{ state_attr('sensor.deye_monitor', 'Total active IN Power') }}"
