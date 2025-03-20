@@ -9,6 +9,7 @@ A Qt-based integration for connecting Deye inverter systems with Home Assistant,
 - **HTTP Server**: REST API for inverter interaction
 - **Data Collection**: Periodic inverter data collection and processing
 - **Customizable Options**: Configurable communication parameters
+- **Comprehensive Monitoring**: Track battery, grid, solar, and consumption metrics
 
 ## Prerequisites
 
@@ -79,10 +80,76 @@ sensor:
 
 Replace `<IP_ADDRESS>` and `<PORT>` with your actual values.
 
+## Available Sensors
+
+The integration provides access to the following sensor categories and metrics:
+
+### Battery Metrics
+- **Battery Capacity**: Overall battery capacity percentage
+- **Battery SOC**: State of charge percentage 
+- **Battery Voltage**: Battery voltage in V (divided by 10)
+- **Battery Current**: Battery current in mA
+- **Battery Power**: Battery power in W
+- **Battery Temperature**: Battery temperature in °C (divided by 10)
+- **Daily Battery Charge**: Daily energy charged to battery in kWh (divided by 100)
+- **Daily Battery Discharge**: Daily energy discharged from battery in kWh (divided by 100)
+- **Total Battery Charge**: Total energy charged to battery in kWh (divided by 100)
+- **Total Battery Discharge**: Total energy discharged from battery in kWh (divided by 100)
+
+### Grid Metrics
+- **Grid Voltage L1/L2/L3**: Grid voltage for each phase in V (divided by 10)
+- **Current L1/L2/L3**: Current for each phase in A (divided by 10)
+- **Total Grid Power**: Total grid power in W
+- **GridSell Power**: Power being sold to grid in W
+- **Daily Energy Bought**: Daily energy purchased from grid in kWh (divided by 100)
+- **Daily Energy Sold**: Daily energy sold to grid in kWh (divided by 100)
+- **Total Energy Bought**: Total energy purchased from grid in kWh (divided by 100)
+- **Total Energy Sold**: Total energy sold to grid in kWh (divided by 100)
+
+### Solar Production Metrics
+- **PV1/PV2 Voltage**: Voltage from solar panels in V (divided by 10)
+- **PV1/PV2 Current**: Current from solar panels in A (divided by 10)
+- **PV1 Input Power**: Power from PV1 in W
+- **PV2 Power**: Power from PV2 in W
+- **Daily Production**: Daily solar production in kWh (divided by 100)
+- **Total Production**: Total solar production in kWh (divided by 100)
+
+### Load Consumption Metrics
+- **Load Voltage L1/L2/L3**: Load voltage for each phase in V (divided by 10)
+- **Load L1/L2/L3 Power**: Load power for each phase in W
+- **Total Load Power**: Total power consumption in W
+- **Day Load Power**: Current day's load power in W
+- **Daily Load Consumption**: Daily energy consumption in kWh (divided by 100)
+- **Total Load Consumption**: Total energy consumption in kWh (divided by 100)
+
+### Inverter Status Metrics
+- **Inverter L1/L2/L3 Power**: Inverter power for each phase in W
+- **AC Temperature**: Inverter AC temperature in °C (divided by 10)
+- **DC Temperature**: Inverter DC temperature in °C (divided by 10)
+- **Total Active IN Power**: Total active input power in W
+
+### CT Sensor Metrics
+- **External CT L1/L2/L3 Power**: External CT power measurements in W
+- **Internal CT L1/L2/L3 Power**: Internal CT power measurements in W
+- **Gen Port Power**: Generator port power in W
+
+## Lovelace UI
+
+The integration can be visualized in Home Assistant's Lovelace UI. A sample dashboard configuration is available in the `lovelace-ui.yaml` file with cards for:
+
+- Battery status monitoring
+- Grid metrics visualization
+- Solar production tracking
+- Load consumption analysis
+- Inverter status display
+- Power flow visualization
+- Historical data analysis
+
 ## Troubleshooting
 
 - **Serial Connection Issues**: Verify serial port settings and device connections
 - **API Errors**: Confirm REST API configuration in Home Assistant
+- **Sensor Reading Issues**: Check scaling factors in template sensors (some values need to be divided by 10 or 100)
 
 ## Contributing
 
