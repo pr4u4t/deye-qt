@@ -1,9 +1,31 @@
 #include <QVariant>
 #include <QTimer>
 #include <QDateTime>
+#include <QJsonObject>
+#include <QHttpServer>
+#include <QJsonDocument>
+#include <QTcpServer>
 
 #include "main.h"
 #include "utils.h"
+
+bool HttpServer_start(QHttpServer* server, QJsonObject* data){
+    // Define a route for "/sensor"
+    server->route("/sensor", QHttpServerRequest::Method::Get, [data] (const QHttpServerRequest &request, QHttpServerResponder &responder) {
+        Q_UNUSED(request);
+        responder.write(QJsonDocument(*data).toJson(), "application/json");
+    });
+
+    // Start the server on port 8080
+    auto tcpserver = new QTcpServer();
+    if (!tcpserver->listen(QHostAddress::Any, 8080) || !server->bind(tcpserver)) {
+        delete tcpserver;
+        qCritical() << "Failed to start server!";
+        return false;
+    }
+
+    return true;
+}
 
 int main(int argc, char**argv){
     QCoreApplication app(argc, argv);
@@ -90,7 +112,8 @@ int main(int argc, char**argv){
         qDebug() << settings.toString();
     }
 
-    auto deye = new Deye(settings);
+    QJsonObject model;
+    auto deye = new Deye(settings, &model);
 
     if(deye == nullptr){
         return 1;
@@ -124,6 +147,11 @@ int main(int argc, char**argv){
     });
 
     timer.start();
+
+    //-------------------------
+
+    QHttpServer server;
+    HttpServer_start(&server, &model);
 
     return app.exec();
 }

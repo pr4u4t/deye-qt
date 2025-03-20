@@ -1,7 +1,8 @@
 #include "deye.h"
 
-Deye::Deye(const ModBusSettings& settings, QObject* parent)
-: m_modbusDevice(new QModbusRtuSerialClient(parent)){
+Deye::Deye(const ModBusSettings& settings, QJsonObject* model, QObject* parent)
+    : m_modbusDevice(new QModbusRtuSerialClient(parent))
+    , m_model(model){
     if(m_modbusDevice == nullptr){
         qDebug() << "Failed to create modbus device";
         return;
@@ -59,10 +60,12 @@ void Deye::onReadReady(QModbusReply* reply, const ValueModifier& mod){
         for (qsizetype i = 0, total = unit.valueCount(); i < total; ++i) {
             quint16 entry = unit.value(i);
             if(mod.scale != 1.0f){
-                qDebug() << mod.name << "Register Address:" << unit.startAddress()+i << "value:" << entry << mod.unit;
+                //qDebug() << mod.name << "Register Address:" << unit.startAddress()+i << "value:" << entry << mod.unit;
+                (*m_model)[mod.name] = entry;
             } else {
                 const float tmp = static_cast<float>(entry)*mod.scale;
-                qDebug() << mod.name << "Register Address:" << unit.startAddress()+i << "value:" << tmp << mod.unit;
+                //qDebug() << mod.name << "Register Address:" << unit.startAddress()+i << "value:" << tmp << mod.unit;
+                (*m_model)[mod.name] = tmp;
             }
         }
     } else if (reply->error() == QModbusDevice::ProtocolError) {

@@ -1,0 +1,10 @@
+name: "Voltron"
+version: "1.0"
+slug: "voltron_deye"
+description: "Collects sensor data from Deye and exposes it to Home Assistant."
+startup: services
+boot: auto
+options: {}
+schema: {}
+ports:
+  8080/tcp: 8080

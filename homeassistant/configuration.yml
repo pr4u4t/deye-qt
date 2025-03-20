@@ -1,0 +1,149 @@
+sensor:
+  - platform: rest
+    name: "Deye Monitor"
+    resource: "http://localhost:8080/data"  # Replace with your API URL
+    scan_interval: 10  # Update every 10 seconds
+    method: GET
+    value_template: "{{ value_json }}"  # Parse JSON response
+    json_attributes:
+      - AC Temperature
+      - Battery Capacity
+      - Battery Current
+      - Battery Power
+      - Battery SOC
+      - Battery Temperature
+      - Battery Voltage
+      - Current L1
+      - Current L2
+      - Current L3
+      - DC Temperature
+      - Daily Battery Charge
+      - Daily Battery Discharge
+      - Daily Energy Bought
+      - Daily Energy Sold
+      - Daily Load Consumption
+      - Daily Production
+      - Day Load Power
+      - External CT L1 Power
+      - External CT L2 Power
+      - External CT L3 Power
+      - Gen Port Power
+      - Grid Voltage L1
+      - Grid Voltage L2
+      - Grid Voltage L3
+      - GridSell Power
+      - Internal CT L1 Power
+      - Internal CT L2 Power
+      - Internal CT L3 Power
+      - Inverter L1 Power
+      - Inverter L2 Power
+      - Inverter L3 Power
+      - Load L1 Power
+      - Load L2 Power
+      - Load L3 Power
+      - Load Voltage L1
+      - Load Voltage L2
+      - Load Voltage L3
+      - PV1 Current
+      - PV1 Voltage
+      - PV1 input power
+      - PV2 Current
+      - PV2 Power
+      - PV2 Voltage
+      - Total Battery Charge
+      - Total Battery Discharge
+      - Total Energy Bought
+      - Total Energy Sold
+      - Total Grid Power
+      - Total Load Consumption
+      - Total Load Power
+      - Total Production
+      - Total active IN Power
+
+  - platform: template
+    sensors:
+      ac_temperature:
+        friendly_name: "AC Temperature"
+        unit_of_measurement: "°C"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'AC Temperature') | float / 10 }}"
+
+      battery_capacity:
+        friendly_name: "Battery Capacity"
+        unit_of_measurement: "%"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery Capacity') }}"
+
+      battery_current:
+        friendly_name: "Battery Current"
+        unit_of_measurement: "mA"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery Current') }}"
+
+      battery_power:
+        friendly_name: "Battery Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery Power') }}"
+
+      battery_soc:
+        friendly_name: "Battery SOC"
+        unit_of_measurement: "%"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery SOC') }}"
+
+      battery_temperature:
+        friendly_name: "Battery Temperature"
+        unit_of_measurement: "°C"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery Temperature') | float / 10 }}"
+
+      battery_voltage:
+        friendly_name: "Battery Voltage"
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Battery Voltage') | float / 10 }}"
+
+      grid_voltage_l1:
+        friendly_name: "Grid Voltage L1"
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Grid Voltage L1') | float / 10 }}"
+
+      grid_voltage_l2:
+        friendly_name: "Grid Voltage L2"
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Grid Voltage L2') | float / 10 }}"
+
+      grid_voltage_l3:
+        friendly_name: "Grid Voltage L3"
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Grid Voltage L3') | float / 10 }}"
+
+      pv1_voltage:
+        friendly_name: "PV1 Voltage"
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'PV1 Voltage') | float / 10 }}"
+
+      pv1_current:
+        friendly_name: "PV1 Current"
+        unit_of_measurement: "A"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'PV1 Current') | float / 10 }}"
+
+      pv2_voltage:
+        friendly_name: "PV2 Voltage"
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'PV2 Voltage') | float / 10 }}"
+
+      pv2_current:
+        friendly_name: "PV2 Current"
+        unit_of_measurement: "A"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'PV2 Current') | float / 10 }}"
+
+      total_grid_power:
+        friendly_name: "Total Grid Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Total Grid Power') }}"
+
+      total_load_power:
+        friendly_name: "Total Load Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Total Load Power') }}"
+
+      total_active_in_power:
+        friendly_name: "Total Active IN Power"
+        unit_of_measurement: "W"
+        value_template: "{{ state_attr('sensor.energy_monitor', 'Total active IN Power') }}"
+

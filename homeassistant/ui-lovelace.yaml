@@ -1,0 +1,31 @@
+title: Deye Monitor
+views:
+  - title: Deye Overview
+    path: voltron
+    cards:
+      - type: entities
+        title: Battery Status
+        entities:
+          - sensor.battery_capacity
+          - sensor.battery_voltage
+          - sensor.battery_power
+          - sensor.battery_current
+
+      - type: entities
+        title: Grid & PV Status
+        entities:
+          - sensor.grid_voltage_l1
+          - sensor.grid_voltage_l2
+          - sensor.grid_voltage_l3
+          - sensor.pv1_voltage
+          - sensor.pv1_current
+          - sensor.pv2_voltage
+          - sensor.pv2_current
+
+      - type: entities
+        title: Energy Usage
+        entities:
+          - sensor.total_grid_power
+          - sensor.total_load_power
+          - sensor.total_active_in_power
+
