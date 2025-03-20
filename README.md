@@ -1,143 +1,93 @@
-# deye-qt
-
 # Deye Integration for Home Assistant
 
-This project integrates a Deye inverter system with Home Assistant using Qt. The integration supports communication over serial ports, Modbus, and HTTP server with REST API for controlling and monitoring the inverter system.
+A Qt-based integration for connecting Deye inverter systems with Home Assistant, supporting serial communication, Modbus protocol, and REST API functionality.
 
 ## Features
 
-- **Serial Communication**: Interface with the Deye inverter via a serial port.
-- **Modbus**: Support for Modbus communication protocol for data exchange.
-- **HTTP Server**: Provides a REST API to interact with the Deye inverter.
-- **Data Collection**: Collects and processes inverter data periodically.
-- **Customizable Options**: Configurable communication parameters for serial communication.
+- **Serial Communication**: Interface with Deye inverters via serial ports
+- **Modbus Protocol**: Support for Modbus data exchange
+- **HTTP Server**: REST API for inverter interaction
+- **Data Collection**: Periodic inverter data collection and processing
+- **Customizable Options**: Configurable communication parameters
 
-## Setup
+## Prerequisites
 
-### Prerequisites
+- Home Assistant installation
+- Qt development environment (Qt 5.15 or higher recommended)
+- Deye inverter with physical connection to your system
 
-Before setting up the integration, make sure you have:
+## Installation
 
-- Home Assistant running.
-- Qt development environment set up (Qt 5.15 or higher recommended).
-- A Deye inverter connected to your system.
-
-### Installation
-
-1. Clone this repository to your local machine.
-   
+1. Clone the repository:
    ```bash
    git clone https://github.com/your-repository/deye-home-assistant.git
    cd deye-home-assistant
-Build the project using Qt:
+   ```
 
-    qmake
-    make
+2. Build the project:
+   ```bash
+   qmake
+   make
+   ```
 
-    Follow the instructions for configuring the Home Assistant integration (detailed below).
+3. Configure the integration as detailed below
 
-Configuration
+## Configuration
 
-To configure the Deye integration, you need to specify the communication settings. The following options are available when running the Qt-based data collector:
-Command-Line Options
+### Command-Line Options
 
-The data collector can be configured via command-line options. The following options are available:
+The data collector accepts the following command-line parameters:
 
-    -d, --device: Open serial port <device> (e.g., /dev/ttyUSB0 on Linux or COM3 on Windows).
+| Option | Description | Example |
+|--------|-------------|---------|
+| `-d, --device` | Serial port device path | `--device /dev/ttyUSB0` |
+| `-p, --parity` | Parity setting (none, even, odd, mark, space) | `--parity none` |
+| `-b, --baud` | Baud rate (e.g., 9600, 115200) | `--baud 115200` |
+| `-l, --dataBits` | Number of data bits (5, 6, 7, 8) | `--dataBits 8` |
+| `-s, --stopBits` | Number of stop bits (1, 2) | `--stopBits 1` |
+| `-t, --responseTime` | Response timeout in milliseconds | `--responseTime 1000` |
+| `-r, --numberOfRetries` | Number of retries for communication errors | `--numberOfRetries 3` |
+| `-i, --interval` | Data collection interval in milliseconds | `--interval 5000` |
 
-    Example:
+### Example Command
 
---device /dev/ttyUSB0
-
--p, --parity: Set the parity for serial communication. Options include none, even, odd, mark, space.
-
-Example:
-
---parity none
-
--b, --baud: Set the baud rate for serial communication. Common values include 9600 and 115200.
-
-Example:
-
---baud 115200
-
--l, --dataBits: Set the number of data bits. Available options are 5, 6, 7, or 8.
-
-Example:
-
---dataBits 8
-
--s, --stopBits: Set the number of stop bits. Available options are 1 or 2.
-
-Example:
-
---stopBits 1
-
--t, --responseTime: Set the response timeout in milliseconds.
-
-Example:
-
---responseTime 1000
-
--r, --numberOfRetries: Set the number of retries for communication errors.
-
-Example:
-
---numberOfRetries 3
-
--i, --interval: Set the loop interval in milliseconds (how often data is collected and sent).
-
-Example:
-
-    --interval 5000
-
-Example Command
-
-To start the data collector with custom serial settings:
-
+```bash
 ./deye_data_collector --device /dev/ttyUSB0 --parity none --baud 115200 --dataBits 8 --stopBits 1 --responseTime 1000 --numberOfRetries 3 --interval 5000
+```
 
-This command configures the data collector to:
+## Home Assistant Integration
 
-    Use the /dev/ttyUSB0 serial port.
-    Set parity to none.
-    Set the baud rate to 115200.
-    Use 8 data bits.
-    Set 1 stop bit.
-    Set a response timeout of 1000 milliseconds.
-    Retry 3 times on communication errors.
-    Collect data every 5 seconds.
+### REST API
 
-Home Assistant Integration
-REST API
-
-The Deye integration exposes a REST API that allows Home Assistant to interact with the inverter. You can use this API to fetch inverter data, send commands, and more.
-
-The API can be accessed via:
-
+The integration exposes a REST API endpoint at:
+```
 http://<IP_ADDRESS>:<PORT>/api/v1/inverter
+```
 
-Refer to the API documentation for detailed endpoints and usage.
-Home Assistant Setup
+### Home Assistant Configuration
 
-To integrate the Deye inverter with Home Assistant, you will need to add the appropriate configuration to your configuration.yaml file.
+Add the following to your `configuration.yaml`:
 
+```yaml
 sensor:
   - platform: rest
     resource: http://<IP_ADDRESS>:<PORT>/api/v1/inverter/status
     name: "Deye Inverter Status"
     value_template: "{{ value_json.status }}"
     scan_interval: 60
+```
 
-Replace <IP_ADDRESS> and <PORT> with the actual IP address and port of your running Deye data collector.
-Troubleshooting
+Replace `<IP_ADDRESS>` and `<PORT>` with your actual values.
 
-    Serial Connection Issues: Ensure the correct serial port and communication parameters are configured.
-    API Errors: Double-check the REST API configuration in Home Assistant.
+## Troubleshooting
 
-License
+- **Serial Connection Issues**: Verify serial port settings and device connections
+- **API Errors**: Confirm REST API configuration in Home Assistant
+
+## Contributing
+
+Contributions are welcome! Please feel free to open issues or submit pull requests.
+
+## License
 
 This project is licensed under the MIT License.
-Contributing
-
-Feel free to open issues or submit pull requests for enhancements or bug fixes!
