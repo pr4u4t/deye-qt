@@ -1,3 +1,3 @@
 #!/bin/bash
 
-qmake && make
+qmake6 && make
