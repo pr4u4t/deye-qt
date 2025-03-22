@@ -8,12 +8,13 @@
 #include <QJsonObject>
 
 #include "utils.h"
+#include "settings.h"
 
 class Deye : public QObject {
     Q_OBJECT
 
 public:
-    Deye(const ModBusSettings& settings, QJsonObject* model = nullptr, QObject* parent = nullptr);
+    Deye(const Settings& settings, QJsonObject* model = nullptr, QObject* parent = nullptr);
 
     ~Deye(){
         if(m_modbusDevice != nullptr){

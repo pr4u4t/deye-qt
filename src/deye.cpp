@@ -1,6 +1,6 @@
 #include "deye.h"
 
-Deye::Deye(const ModBusSettings& settings, QJsonObject* model, QObject* parent)
+Deye::Deye(const Settings& settings, QJsonObject* model, QObject* parent)
     : m_modbusDevice(new QModbusRtuSerialClient(parent))
     , m_model(model){
     if(m_modbusDevice == nullptr){
@@ -10,30 +10,30 @@ Deye::Deye(const ModBusSettings& settings, QJsonObject* model, QObject* parent)
 
     m_modbusDevice->setConnectionParameter(
         QModbusDevice::SerialPortNameParameter,
-        settings.m_port);
+        settings.device);
 
     m_modbusDevice->setConnectionParameter(
         QModbusDevice::SerialParityParameter,
-        settings.m_parity
+        SerialPort_parity_from_string(settings.parity)
     );
 
     m_modbusDevice->setConnectionParameter(
         QModbusDevice::SerialBaudRateParameter,
-        settings.m_baud
+        settings.baud
     );
 
     m_modbusDevice->setConnectionParameter(
         QModbusDevice::SerialDataBitsParameter,
-        settings.m_dataBits
+        settings.dataBits
     );
 
     m_modbusDevice->setConnectionParameter(
         QModbusDevice::SerialStopBitsParameter,
-        settings.m_stopBits
+        settings.stopBits
     );
 
-    m_modbusDevice->setTimeout(settings.m_responseTime);
-    m_modbusDevice->setNumberOfRetries(settings.m_numberOfRetries);
+    m_modbusDevice->setTimeout(settings.responseTime);
+    m_modbusDevice->setNumberOfRetries(settings.numberOfRetries);
 
     QObject::connect(m_modbusDevice, &QModbusClient::errorOccurred, [this](QModbusDevice::Error) {
         qDebug() << this->m_modbusDevice->errorString();

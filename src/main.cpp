@@ -5,11 +5,12 @@
 #include <QHttpServer>
 #include <QJsonDocument>
 #include <QTcpServer>
+#include <QFile>
 
 #include "main.h"
 #include "utils.h"
 
-bool HttpServer_start(QHttpServer* server, QJsonObject* data){
+bool HttpServer_start(const Settings& settings, QHttpServer* server, QJsonObject* data){
     // Define a route for "/sensor"
     server->route("/sensor", QHttpServerRequest::Method::Get, [data] (const QHttpServerRequest &request, QHttpServerResponder &responder) {
         Q_UNUSED(request);
@@ -18,7 +19,7 @@ bool HttpServer_start(QHttpServer* server, QJsonObject* data){
 
     // Start the server on port 8080
     auto tcpserver = new QTcpServer();
-    if (!tcpserver->listen(QHostAddress::Any, 8080) || !server->bind(tcpserver)) {
+    if (!tcpserver->listen(QHostAddress::Any, settings.listen) || !server->bind(tcpserver)) {
         delete tcpserver;
         qCritical() << "Failed to start server!";
         return false;
@@ -103,45 +104,33 @@ int main(int argc, char**argv){
         return 0;
     }
 
-    const conf = parser.value("config");
+    const auto conf = parser.value("config");
     Settings config;
 
     if(conf.size() > 0){
-        qInfo() << "Reading configuration from file"
-        QJsonObject config;
-        loadConfig(conf, &config);
-        config.fillFromJson(config);
+        qInfo() << "Reading configuration from file";
+        QJsonObject cnf;
+        loadConfig(conf, cnf);
+        config.fillFromJson(cnf);
     }
     
+    
+       
     config.fillFromCmd(parser);
 
     if (parser.isSet(verboseOption)){
-        qDebug() << "Device:" << device;
-        qDebug() << "Parity:" << parity;
-        qDebug() << "Baud rate:" << baud;
-        qDebug() << "Data bits:" << dataBits;
-        qDebug() << "Stop bits:" << stopBits;
-        qDebug() << "Response time (ms):" << responseTime;
-        qDebug() << "Number of retries:" << numberOfRetries
-        qDebug() << "Listen: " << listen;
-    }
-
-    auto settings = ModBusSettings(
-        config.device, 
-        SerialPort_parity_from_string(config.parity), 
-        config.baud.toInt(), 
-        config.dataBits.toInt(), 
-        config.stopBits.toInt(), 
-        config.responseTime.toInt(), 
-        config.numberOfRetries.toInt()
-    );
-
-    if (parser.isSet(verboseOption)){
-        qDebug() << settings.toString();
+        qDebug() << "Device:" << config.device;
+        qDebug() << "Parity:" << config.parity;
+        qDebug() << "Baud rate:" << config.baud;
+        qDebug() << "Data bits:" << config.dataBits;
+        qDebug() << "Stop bits:" << config.stopBits;
+        qDebug() << "Response time (ms):" << config.responseTime;
+        qDebug() << "Number of retries:" << config.numberOfRetries;
+        qDebug() << "Listen: " << config.listen;
     }
 
     QJsonObject model;
-    auto deye = new Deye(settings, &model);
+    auto deye = new Deye(config, &model);
 
     if(deye == nullptr){
         return 1;
@@ -179,7 +168,7 @@ int main(int argc, char**argv){
     //-------------------------
 
     QHttpServer server;
-    HttpServer_start(&server, &model);
+    HttpServer_start(config, &server, &model);
 
     return app.exec();
 }
