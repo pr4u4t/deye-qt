@@ -75,7 +75,7 @@ int main(int argc, char**argv){
     parser.addOption({{"r", "numberOfRetries"}, "Set number of retries for communication errors.", "numberOfRetries"});
     parser.addOption({{"i", "interval"}, "Loop <interval>.", "interval"});
     parser.addOption({{"c", "config"}, "Configuration file path", "config"});
-    parser.addOption({{"l", "listen"}, "Listen port number", "listen"});
+    parser.addOption({{"n", "listen"}, "Listen port number", "listen"});
     parser.process(app);
 
     if (parser.isSet(verboseOption)){

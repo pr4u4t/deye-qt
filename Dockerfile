@@ -8,5 +8,5 @@ RUN qmake6 CONFIG+=release && \
 
 EXPOSE 8080
 ENTRYPOINT ["/app/src/deye"]
-CMD ["-c", "/app/config.js"]
+CMD ["-c", "/data/options.json", "--loop"]
 

@@ -1,7 +1,7 @@
 sensor:
   - platform: rest
     name: "deye_monitor"
-    resource: "http://localhost:8080/data"  # Replace with your API URL
+    resource: "http://localhost:8080/sensor"  # Replace with your API URL
     scan_interval: 10  # Update every 10 seconds
     method: GET
     value_template: "{{ value_json }}"  # Parse JSON response
