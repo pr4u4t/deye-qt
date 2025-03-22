@@ -27,6 +27,28 @@ bool HttpServer_start(QHttpServer* server, QJsonObject* data){
     return true;
 }
 
+bool loadConfig(const QString &path, QJsonObject &config) {
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open config file:" << path;
+        return false;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    if (!doc.isObject()) {
+        qWarning() << "Invalid JSON format in config file.";
+        return false;
+    }
+
+    config = doc.object();
+    return true;
+}
+
+
+
 int main(int argc, char**argv){
     QCoreApplication app(argc, argv);
     
@@ -51,7 +73,8 @@ int main(int argc, char**argv){
     parser.addOption({{"t", "responseTime"}, "Set response timeout in milliseconds.", "responseTime"}); 
     parser.addOption({{"r", "numberOfRetries"}, "Set number of retries for communication errors.", "numberOfRetries"});
     parser.addOption({{"i", "interval"}, "Loop <interval>.", "interval"});
-
+    parser.addOption({{"c", "config"}, "Configuration file path", "config"});
+    parser.addOption({{"l", "listen"}, "Listen port number", "listen"});
     parser.process(app);
 
     if (parser.isSet(verboseOption)){
@@ -80,13 +103,17 @@ int main(int argc, char**argv){
         return 0;
     }
 
-    const auto device = parser.value("device");
-    const auto parity = parser.value("parity");
-    const auto baud = parser.value("baud");
-    const auto dataBits = parser.value("dataBits");
-    const auto stopBits = parser.value("stopBits");
-    const auto responseTime = parser.value("responseTime"); 
-    const auto numberOfRetries = parser.value("numberOfRetries");
+    const conf = parser.value("config");
+    Settings config;
+
+    if(conf.size() > 0){
+        qInfo() << "Reading configuration from file"
+        QJsonObject config;
+        loadConfig(conf, &config);
+        config.fillFromJson(config);
+    }
+    
+    config.fillFromCmd(parser);
 
     if (parser.isSet(verboseOption)){
         qDebug() << "Device:" << device;
@@ -95,17 +122,18 @@ int main(int argc, char**argv){
         qDebug() << "Data bits:" << dataBits;
         qDebug() << "Stop bits:" << stopBits;
         qDebug() << "Response time (ms):" << responseTime;
-        qDebug() << "Number of retries:" << numberOfRetries;
+        qDebug() << "Number of retries:" << numberOfRetries
+        qDebug() << "Listen: " << listen;
     }
 
     auto settings = ModBusSettings(
-        device, 
-        SerialPort_parity_from_string(parity), 
-        baud.toInt(), 
-        dataBits.toInt(), 
-        stopBits.toInt(), 
-        responseTime.toInt(), 
-        numberOfRetries.toInt()
+        config.device, 
+        SerialPort_parity_from_string(config.parity), 
+        config.baud.toInt(), 
+        config.dataBits.toInt(), 
+        config.stopBits.toInt(), 
+        config.responseTime.toInt(), 
+        config.numberOfRetries.toInt()
     );
 
     if (parser.isSet(verboseOption)){
