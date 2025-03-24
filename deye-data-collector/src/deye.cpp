@@ -19,7 +19,7 @@ void updateSensor(QMqttClient* mqttClient, const DeyeSensor &sensor, float rawVa
     const float scaledValue = rawValue * sensor.scalingFactor;
     const QString topic = "deye/sensor/" + sensor.topicSuffix + "/state";
 
-    qDebug() << "publishing" << topic << " " <<  QByteArray::number(scaledValue, 'f', 2);
+    qDebug() << "publishing" << topic << " value: " <<  QByteArray::number(scaledValue, 'f', 2) << "raw: " << rawValue;
 
     mqttClient->publish(
         QMqttTopicName(topic),
@@ -101,7 +101,7 @@ void Deye::onReadReady(QModbusReply* reply, const ValueModifier& mod){
 
             auto k = DICT_find(m_dict, mod.name);
             if(k != -1){
-                qDebug() << mod.name << "found";
+                //qDebug() << mod.name << "found";
                 updateSensor(m_client, m_dict[k], unit.value(i));
             } else {
                 qDebug() << mod.name << "not found";
@@ -140,7 +140,7 @@ void Deye::read(int startAddress, int numRegisters, const ValueModifier& mod, in
 }
 
 void Deye::readReport(){
-    read(672, 1, {1, "W", "PV1 input power"});
+    read(672, 1, {1, "W", "PV1 Power"});
     read(673, 1, {1, "W", "PV2 Power"});
     read(676, 1, {0.1, "V", "PV1 Voltage"});
     read(678, 1, {0.1, "V", "PV2 Voltage"});
