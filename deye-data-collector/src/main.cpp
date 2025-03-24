@@ -231,8 +231,6 @@ int main(int argc, char**argv){
         config.fillFromJson(cnf);
     }
     
-    
-       
     config.fillFromCmd(parser);
 
     if (parser.isSet(verboseOption)){
@@ -247,7 +245,9 @@ int main(int argc, char**argv){
     }
 
     QJsonObject model;
-    auto deye = new Deye(config, &model);
+    auto dict = createSensorList();
+    auto mqtt = setupMqttClient(config.device);
+    auto deye = new Deye(config, &model, mqtt, dict);
 
     if(deye == nullptr){
         return 1;
@@ -287,7 +287,7 @@ int main(int argc, char**argv){
     QHttpServer server;
     HttpServer_start(config, &server, &model);
 
-    auto mqtt = setupMqttClient(config.device);
+    
 
     return app.exec();
 }

@@ -1,8 +1,37 @@
 #include "deye.h"
 
-Deye::Deye(const Settings& settings, QJsonObject* model, QObject* parent)
+auto DICT_find(const QVector<DeyeSensor>& dict, const QString& name) -> int{
+    for(int i = 0; i < dict.size(); ++i){
+        if(dict[i].name == name){
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+void updateSensor(QMqttClient* mqttClient, const DeyeSensor &sensor, float rawValue) {
+    if (!mqttClient || mqttClient->state() != QMqttClient::Connected) {
+        qWarning() << "MQTT client not connected!";
+        return;
+    }
+
+    const float scaledValue = rawValue * sensor.scalingFactor;
+    const QString topic = "deye/sensor/" + sensor.topicSuffix + "/state";
+
+    mqttClient->publish(
+        QMqttTopicName(topic),
+        QByteArray::number(scaledValue, 'f', 2),  // 2 decimal places
+        1,  // QoS 1
+        false
+    );
+}
+
+Deye::Deye(const Settings& settings, QJsonObject* model, QMqttClient *client, const QVector<DeyeSensor>& dict, QObject* parent)
     : m_modbusDevice(new QModbusRtuSerialClient(parent))
-    , m_model(model){
+    , m_model(model)
+    , m_client(client)
+    , m_dict(dict){
     if(m_modbusDevice == nullptr){
         qDebug() << "Failed to create modbus device";
         return;
@@ -66,6 +95,11 @@ void Deye::onReadReady(QModbusReply* reply, const ValueModifier& mod){
                 const float tmp = static_cast<float>(entry)*mod.scale;
                 //qDebug() << mod.name << "Register Address:" << unit.startAddress()+i << "value:" << tmp << mod.unit;
                 (*m_model)[mod.name] = tmp;
+            }
+
+            auto k = DICT_find(m_dict, mod.name);
+            if(k != -1){
+                updateSensor(m_client, m_dict[k], unit.value(i));
             }
         }
     } else if (reply->error() == QModbusDevice::ProtocolError) {

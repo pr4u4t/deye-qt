@@ -6,15 +6,26 @@
 #include <QVariant>
 #include <QtLogging>
 #include <QJsonObject>
+#include <QMqttClient>
+#include <QVector>
 
 #include "utils.h"
 #include "settings.h"
+
+struct DeyeSensor {
+    QString name;          // "Battery SOC"
+    QString unit;          // "%"
+    QString deviceClass;   // "battery"
+    QString topicSuffix;   // "battery_soc"
+    QString uniqueId;      // "deye_battery_soc_001"
+    float scalingFactor;   // 1.0, 0.1, or 0.01 for /10 or /100 values
+};
 
 class Deye : public QObject {
     Q_OBJECT
 
 public:
-    Deye(const Settings& settings, QJsonObject* model = nullptr, QObject* parent = nullptr);
+    Deye(const Settings& settings, QJsonObject* model = nullptr, QMqttClient *client = nullptr, const QVector<DeyeSensor>& dict = QVector<DeyeSensor>(), QObject* parent = nullptr);
 
     ~Deye(){
         if(m_modbusDevice != nullptr){
@@ -46,16 +57,9 @@ protected:
 
 private:
     QModbusRtuSerialClient* m_modbusDevice = nullptr;
-    QJsonObject* m_model;
-};
-
-struct DeyeSensor {
-    QString name;          // "Battery SOC"
-    QString unit;          // "%"
-    QString deviceClass;   // "battery"
-    QString topicSuffix;   // "battery_soc"
-    QString uniqueId;      // "deye_battery_soc_001"
-    float scalingFactor;   // 1.0, 0.1, or 0.01 for /10 or /100 values
+    QJsonObject* m_model = nullptr;
+    QMqttClient* m_client = nullptr;
+    QVector<DeyeSensor> m_dict;
 };
 
 #endif
