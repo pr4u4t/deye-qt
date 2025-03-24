@@ -25,7 +25,7 @@ void updateSensor(QMqttClient* mqttClient, const DeyeSensor &sensor, float rawVa
         QMqttTopicName(topic),
         QByteArray::number(scaledValue, 'f', 2),  // 2 decimal places
         1,  // QoS 1
-        false
+        true
     );
 }
 
