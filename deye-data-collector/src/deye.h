@@ -49,4 +49,13 @@ private:
     QJsonObject* m_model;
 };
 
+struct DeyeSensor {
+    QString name;          // "Battery SOC"
+    QString unit;          // "%"
+    QString deviceClass;   // "battery"
+    QString topicSuffix;   // "battery_soc"
+    QString uniqueId;      // "deye_battery_soc_001"
+    float scalingFactor;   // 1.0, 0.1, or 0.01 for /10 or /100 values
+};
+
 #endif

@@ -39,3 +39,4 @@ moc_*
 # Ignore all Makefiles in any directory
 **/Makefile
 **/Makefile.*
+push.sh
