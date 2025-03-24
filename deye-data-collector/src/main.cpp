@@ -45,7 +45,7 @@ QVector<DeyeSensor> createSensorList() {
         {"PV2 Current", "A", "current", "pv2_current", "deye_pv2_current_021", 0.1},
 
         // Power Sensors
-        {"PV1 Input Power", "W", "power", "pv1_input_power", "deye_pv1_input_power_022", 1.0},
+        {"PV1 Power", "W", "power", "pv1_input_power", "deye_pv1_power_022", 1.0},
         {"PV2 Power", "W", "power", "pv2_power", "deye_pv2_power_023", 1.0},
         {"Day Load Power", "W", "power", "day_load_power", "deye_day_load_power_024", 1.0},
         {"External CT L1 Power", "W", "power", "external_ct_l1_power", "deye_external_ct_l1_power_025", 1.0},
