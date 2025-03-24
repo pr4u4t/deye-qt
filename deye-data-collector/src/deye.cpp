@@ -19,6 +19,8 @@ void updateSensor(QMqttClient* mqttClient, const DeyeSensor &sensor, float rawVa
     const float scaledValue = rawValue * sensor.scalingFactor;
     const QString topic = "deye/sensor/" + sensor.topicSuffix + "/state";
 
+    qDebug() << "publishing" << topic << " " <<  QByteArray::number(scaledValue, 'f', 2);
+
     mqttClient->publish(
         QMqttTopicName(topic),
         QByteArray::number(scaledValue, 'f', 2),  // 2 decimal places
@@ -99,7 +101,10 @@ void Deye::onReadReady(QModbusReply* reply, const ValueModifier& mod){
 
             auto k = DICT_find(m_dict, mod.name);
             if(k != -1){
+                qDebug() << mod.name << "found";
                 updateSensor(m_client, m_dict[k], unit.value(i));
+            } else {
+                qDebug() << mod.name << "not found";
             }
         }
     } else if (reply->error() == QModbusDevice::ProtocolError) {

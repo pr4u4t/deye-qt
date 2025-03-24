@@ -19,6 +19,40 @@ struct DeyeSensor {
     QString topicSuffix;   // "battery_soc"
     QString uniqueId;      // "deye_battery_soc_001"
     float scalingFactor;   // 1.0, 0.1, or 0.01 for /10 or /100 values
+
+    // Add this method
+    QString toString() const {
+        return QString("DeyeSensor { "
+                      "name: '%1', "
+                      "unit: '%2', "
+                      "deviceClass: '%3', "
+                      "topicSuffix: '%4', "
+                      "uniqueId: '%5', "
+                      "scalingFactor: %6 }")
+            .arg(name)
+            .arg(unit)
+            .arg(deviceClass)
+            .arg(topicSuffix)
+            .arg(uniqueId)
+            .arg(scalingFactor);
+    }
+
+    friend QDebug operator<<(QDebug debug, const DeyeSensor &sensor) {
+        QDebugStateSaver saver(debug);
+        debug.nospace() << sensor.toString();
+        return debug;
+    }
+
+    QJsonObject toJson() const {
+        return {
+            {"name", name},
+            {"unit", unit},
+            {"device_class", deviceClass},
+            {"topic_suffix", topicSuffix},
+            {"unique_id", uniqueId},
+            {"scaling_factor", scalingFactor}
+        };
+    }
 };
 
 class Deye : public QObject {
