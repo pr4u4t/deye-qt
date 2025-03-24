@@ -148,6 +148,8 @@ void publishAutoDiscovery(QMqttClient* mqttClient) {
 QMqttClient* setupMqttClient(const QString& id) {
     auto client = new QMqttClient();
     client->setHostname("localhost");  // HA Mosquitto broker
+    client->setUsername("homeassistant");
+    client->setPassword("YieVi1aeceoruavoo6io6uChaeD2looweil5aishooshoh7dan4ahreeYa1eal4o");
     client->setPort(1883);
     client->setClientId("deye-inverter-addon-"+id);
     client->setProtocolVersion(QMqttClient::MQTT_3_1_1);
