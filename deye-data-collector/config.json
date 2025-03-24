@@ -35,5 +35,5 @@
   "map": ["config"],
   "webui": "http://[HOST]:[PORT:8080]",
   "ingress": true,
-  "image": "ghcr.io/your-user/deye-data-collector"
+  "image": "ghcr.io/pr4u4t/deye-data-collector:1.0.0"
 }
