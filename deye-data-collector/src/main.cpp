@@ -150,6 +150,7 @@ QMqttClient* setupMqttClient(const QString& id) {
     client->setHostname("localhost");  // HA Mosquitto broker
     client->setPort(1883);
     client->setClientId("deye-inverter-addon-"+id);
+    client->setProtocolVersion(QMqttClient::MQTT_3_1_1);
     
     QObject::connect(client, &QMqttClient::connected, [client]() {
         qDebug() << "MQTT Connected!";
