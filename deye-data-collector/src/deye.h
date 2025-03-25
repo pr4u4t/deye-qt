@@ -53,7 +53,8 @@ struct DeyeSensor {
             {"device_class", deviceClass},
             {"topic_suffix", topicSuffix},
             {"unique_id", uniqueId},
-            {"scaling_factor", scalingFactor}
+            {"scaling_factor", scalingFactor},
+            {"address", address}
         };
     }
 };
@@ -62,7 +63,7 @@ class Deye : public QObject {
     Q_OBJECT
 
 public:
-    Deye(const Settings& settings, QJsonObject* model = nullptr, QMqttClient *client = nullptr, const QVector<DeyeSensor>& dict = QVector<DeyeSensor>(), QObject* parent = nullptr);
+    Deye(const Settings& settings, QJsonObject* model = nullptr, QMqttClient *client = nullptr, QObject* parent = nullptr);
 
     ~Deye(){
         if(m_modbusDevice != nullptr){
@@ -79,29 +80,32 @@ public:
         return true;
     }
 
-    void read(int startAddress, int numRegisters, const ValueModifier& mod = ValueModifier(), int serverAddr = 1);
-
-    void read(int startAddress, int numRegisters);
+    void read(int startAddress, int numRegisters, int serverAddress = 1);
 
     void readReport();
 
     const QVector<DeyeSensor>& sensors() const;
     
+    inline void setMqtt(QMqttClient* client){
+        m_client = client;
+    }
+
 signals:
     void reportReady();
 
 protected slots:
-    void onReadReady(QModbusReply* reply, const ValueModifier& mod);
 
     void onReadReady(QModbusReply* reply);
 
 protected:
     QModbusDataUnit readRequest(int startAddress, int numRegisters);
 
-    std::optional<const DeyeSensor&> find(int address) const; 
+    std::optional<const DeyeSensor> find(int address) const; 
+
+    void updateSensor(const DeyeSensor &sensor, float rawValue);
 
 private:
-    QVector<DeyeSensor> Deye::createSensorList() const;
+    QVector<DeyeSensor> createSensorList() const;
 
     QModbusRtuSerialClient* m_modbusDevice = nullptr;
     QJsonObject* m_model = nullptr;

@@ -9,12 +9,6 @@ auto ModBus_state_string(int state) -> QString;
 
 auto SerialPort_parity_from_string(const QString& parity) ->  QSerialPort::Parity;
 
-struct ValueModifier{
-    float scale = 1.0f;
-    QString unit;
-    QString name;
-};
-
 struct ModBusSettings {
     ModBusSettings() = default;
 

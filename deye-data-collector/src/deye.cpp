@@ -1,10 +1,9 @@
 #include "deye.h"
 
-Deye::Deye(const Settings& settings, QJsonObject* model, QMqttClient *client, const QVector<DeyeSensor>& dict, QObject* parent)
+Deye::Deye(const Settings& settings, QJsonObject* model, QMqttClient *client, QObject* parent)
     : m_modbusDevice(new QModbusRtuSerialClient(parent))
     , m_model(model)
-    , m_client(client)
-    , m_dict(dict){
+    , m_client(client){
     if(m_modbusDevice == nullptr){
         qDebug() << "Failed to create modbus device";
         return;
@@ -48,49 +47,8 @@ Deye::Deye(const Settings& settings, QJsonObject* model, QMqttClient *client, co
     });
 }
 
-
 QModbusDataUnit Deye::readRequest(int startAddress, int numRegisters){
     return QModbusDataUnit(QModbusDataUnit::HoldingRegisters, startAddress, numRegisters);
-}
-
-void Deye::onReadReady(QModbusReply* reply, const ValueModifier& mod){
-    if (!reply){
-        qDebug() << "reply was empty";
-        return;
-    }
-
-    if (reply->error() == QModbusDevice::NoError) {
-        const QModbusDataUnit unit = reply->result();
-        for (qsizetype i = 0, total = unit.valueCount(); i < total; ++i) {
-            quint16 entry = unit.value(i);
-            if(mod.scale != 1.0f){
-                //qDebug() << mod.name << "Register Address:" << unit.startAddress()+i << "value:" << entry << mod.unit;
-                (*m_model)[mod.name] = entry;
-            } else {
-                const float tmp = static_cast<float>(entry)*mod.scale;
-                //qDebug() << mod.name << "Register Address:" << unit.startAddress()+i << "value:" << tmp << mod.unit;
-                (*m_model)[mod.name] = tmp;
-            }
-
-            auto k = DICT_find(m_dict, mod.name);
-            if(k != -1){
-                //qDebug() << mod.name << "found";
-                updateSensor(m_client, m_dict[k], unit.value(i));
-            } else {
-                qDebug() << mod.name << "not found";
-            }
-        }
-    } else if (reply->error() == QModbusDevice::ProtocolError) {
-        qDebug() << QString("Read response error: %1 (Modbus exception: 0x%2)").
-                                    arg(reply->errorString()).
-                                    arg(reply->rawResult().exceptionCode(), -1, 16);
-    } else {
-        qDebug() << QString("Read response error: %1 (code: 0x%2)").
-                                    arg(reply->errorString()).
-                                    arg(reply->error(), -1, 16);
-    }
-
-    reply->deleteLater();
 }
 
 void Deye::onReadReady(QModbusReply* reply){
@@ -103,21 +61,12 @@ void Deye::onReadReady(QModbusReply* reply){
         const QModbusDataUnit unit = reply->result();
         for (qsizetype i = 0, total = unit.valueCount(); i < total; ++i) {
             quint16 entry = unit.value(i);
-            if(mod.scale != 1.0f){
-                //qDebug() << mod.name << "Register Address:" << unit.startAddress()+i << "value:" << entry << mod.unit;
-                (*m_model)[mod.name] = entry;
+            auto k = find(unit.startAddress());
+            if(k.has_value()){
+                (*m_model)[k.value().uniqueId] = static_cast<float>(entry)*k.value().scalingFactor;
+                updateSensor(k.value(), unit.value(i));
             } else {
-                const float tmp = static_cast<float>(entry)*mod.scale;
-                //qDebug() << mod.name << "Register Address:" << unit.startAddress()+i << "value:" << tmp << mod.unit;
-                (*m_model)[mod.name] = tmp;
-            }
-
-            auto k = DICT_find(m_dict, mod.name);
-            if(k != -1){
-                //qDebug() << mod.name << "found";
-                updateSensor(m_client, m_dict[k], unit.value(i));
-            } else {
-                qDebug() << mod.name << "not found";
+                qDebug() << "address: " << unit.startAddress() << "not found";
             }
         }
     } else if (reply->error() == QModbusDevice::ProtocolError) {
@@ -133,16 +82,16 @@ void Deye::onReadReady(QModbusReply* reply){
     reply->deleteLater();
 }
 
-void Deye::read(int startAddress, int numRegisters, const ValueModifier& mod, int serverAddr){
+void Deye::read(int startAddress, int numRegisters, int serverAddress){
     if (m_modbusDevice == nullptr){
         qWarning() << "modbusDevice not initialized";
         return;
     }
 
-    if (auto *reply = m_modbusDevice->sendReadRequest(readRequest(startAddress, numRegisters), serverAddr)) {
+    if (auto *reply = m_modbusDevice->sendReadRequest(readRequest(startAddress, numRegisters), serverAddress)) {
         if (!reply->isFinished()){
-            QObject::connect(reply, &QModbusReply::finished, [this, reply, mod](){
-                this->onReadReady(reply, mod);
+            QObject::connect(reply, &QModbusReply::finished, [this, reply](){
+                this->onReadReady(reply);
             });
         } else {
             delete reply; // broadcast replies return immediately
@@ -152,29 +101,10 @@ void Deye::read(int startAddress, int numRegisters, const ValueModifier& mod, in
     }
 }
 
-void read(int startAddress, int numRegisters){
-    if (m_modbusDevice == nullptr){
-        qWarning() << "modbusDevice not initialized";
-        return;
-    }
-
-    if (auto *reply = m_modbusDevice->sendReadRequest(readRequest(startAddress, numRegisters), serverAddr)) {
-        if (!reply->isFinished()){
-            QObject::connect(reply, &QModbusReply::finished, [this, reply, mod](){
-                this->onReadReady(reply, mod);
-            });
-        } else {
-            delete reply; // broadcast replies return immediately
-        }
-    } else {
-        qCritical() << QString("Read error: %1").arg(m_modbusDevice->errorString());
-    }
-}
-
-std::optional<const DeyeSensor&> Deye::find(int address) const{
-    for(const auto& sensor : sensors){
+std::optional<const DeyeSensor> Deye::find(int address) const{
+    for(const auto& sensor : m_dict){
         if(sensor.address == address){
-            return std::optional<const DeyeSensor&>(sensor);
+            return std::optional<const DeyeSensor>(sensor);
         }
     }
 
@@ -282,7 +212,7 @@ void Deye::updateSensor(const DeyeSensor &sensor, float rawValue) {
 }
 
 void Deye::readReport(){
-    for(const auto sensor : m_dict){
+    for(const auto& sensor : m_dict){
         read(sensor.address, 1);
     }
 }

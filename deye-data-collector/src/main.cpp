@@ -173,10 +173,9 @@ int main(int argc, char**argv){
     }
 
     QJsonObject model;
-    auto dict = createSensorList();
-    auto mqtt = setupMqttClient(config.device, dict);
-    auto deye = new Deye(config, &model, mqtt, dict);
-
+    auto deye = new Deye(config, &model);
+    auto mqtt = setupMqttClient(config.device, deye->sensors());
+    deye->setMqtt(mqtt);
     if(deye == nullptr){
         return 1;
     }
