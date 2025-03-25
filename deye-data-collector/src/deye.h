@@ -101,6 +101,8 @@ protected:
     std::optional<const DeyeSensor&> find(int address) const; 
 
 private:
+    QVector<DeyeSensor> Deye::createSensorList() const;
+
     QModbusRtuSerialClient* m_modbusDevice = nullptr;
     QJsonObject* m_model = nullptr;
     QMqttClient* m_client = nullptr;

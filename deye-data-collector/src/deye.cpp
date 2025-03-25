@@ -1,15 +1,5 @@
 #include "deye.h"
 
-auto DICT_find(const QVector<DeyeSensor>& dict, const QString& name) -> int{
-    for(int i = 0; i < dict.size(); ++i){
-        if(dict[i].name == name){
-            return i;
-        }
-    }
-
-    return -1;
-}
-
 Deye::Deye(const Settings& settings, QJsonObject* model, QMqttClient *client, const QVector<DeyeSensor>& dict, QObject* parent)
     : m_modbusDevice(new QModbusRtuSerialClient(parent))
     , m_model(model)
@@ -191,7 +181,7 @@ std::optional<const DeyeSensor&> Deye::find(int address) const{
     return std::nullopt;
 }
 
-QVector<DeyeSensor> Deye::createSensorList() {
+QVector<DeyeSensor> Deye::createSensorList() const {
     return {
         // Temperature Sensors (scaling /10)
         {"AC Temperature", "°C", "temperature", "ac_temp", "deye_ac_temp_001", 0.1, 541},
