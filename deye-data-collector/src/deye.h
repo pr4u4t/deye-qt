@@ -13,12 +13,13 @@
 #include "settings.h"
 
 struct DeyeSensor {
-    QString name;          // "Battery SOC"
-    QString unit;          // "%"
-    QString deviceClass;   // "battery"
-    QString topicSuffix;   // "battery_soc"
-    QString uniqueId;      // "deye_battery_soc_001"
-    float scalingFactor;   // 1.0, 0.1, or 0.01 for /10 or /100 values
+    QString name;
+    QString unit;
+    QString deviceClass;
+    QString topicSuffix;
+    QString uniqueId;
+    float scalingFactor;
+    int address;
 
     // Add this method
     QString toString() const {
@@ -28,13 +29,15 @@ struct DeyeSensor {
                       "deviceClass: '%3', "
                       "topicSuffix: '%4', "
                       "uniqueId: '%5', "
-                      "scalingFactor: %6 }")
+                      "scalingFactor: %6, " 
+                      "address: %7 }")
             .arg(name)
             .arg(unit)
             .arg(deviceClass)
             .arg(topicSuffix)
             .arg(uniqueId)
-            .arg(scalingFactor);
+            .arg(scalingFactor)
+            .arg(address);
     }
 
     friend QDebug operator<<(QDebug debug, const DeyeSensor &sensor) {
@@ -78,16 +81,24 @@ public:
 
     void read(int startAddress, int numRegisters, const ValueModifier& mod = ValueModifier(), int serverAddr = 1);
 
+    void read(int startAddress, int numRegisters);
+
     void readReport();
 
+    const QVector<DeyeSensor>& sensors() const;
+    
 signals:
     void reportReady();
 
 protected slots:
     void onReadReady(QModbusReply* reply, const ValueModifier& mod);
 
+    void onReadReady(QModbusReply* reply);
+
 protected:
     QModbusDataUnit readRequest(int startAddress, int numRegisters);
+
+    std::optional<const DeyeSensor&> find(int address) const; 
 
 private:
     QModbusRtuSerialClient* m_modbusDevice = nullptr;

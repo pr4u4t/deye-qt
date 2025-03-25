@@ -11,77 +11,6 @@
 #include "main.h"
 #include "utils.h"
 
-QVector<DeyeSensor> createSensorList() {
-    return {
-        // Temperature Sensors (scaling /10)
-        {"AC Temperature", "°C", "temperature", "ac_temp", "deye_ac_temp_001", 0.1},
-        {"Battery Temperature", "°C", "temperature", "battery_temp", "deye_battery_temp_002", 0.1},
-        {"DC Temperature", "°C", "temperature", "dc_temp", "deye_dc_temp_003", 0.1},
-
-        // Battery Sensors
-        {"Battery Capacity", "%", "battery", "battery_capacity", "deye_battery_capacity_004", 1.0},
-        {"Battery SOC", "%", "battery", "battery_soc", "deye_battery_soc_005", 1.0},
-        {"Battery Current", "mA", "current", "battery_current", "deye_battery_current_006", 1.0},
-        {"Battery Power", "W", "power", "battery_power", "deye_battery_power_007", 1.0},
-        {"Battery Voltage", "V", "voltage", "battery_voltage", "deye_battery_voltage_008", 0.1},
-
-        // Current Sensors (scaling /10)
-        {"Current L1", "A", "current", "current_l1", "deye_current_l1_009", 0.1},
-        {"Current L2", "A", "current", "current_l2", "deye_current_l2_010", 0.1},
-        {"Current L3", "A", "current", "current_l3", "deye_current_l3_011", 0.1},
-
-        // Voltage Sensors (scaling /10)
-        {"Grid Voltage L1", "V", "voltage", "grid_voltage_l1", "deye_grid_voltage_l1_012", 0.1},
-        {"Grid Voltage L2", "V", "voltage", "grid_voltage_l2", "deye_grid_voltage_l2_013", 0.1},
-        {"Grid Voltage L3", "V", "voltage", "grid_voltage_l3", "deye_grid_voltage_l3_014", 0.1},
-        {"Load Voltage L1", "V", "voltage", "load_voltage_l1", "deye_load_voltage_l1_015", 0.1},
-        {"Load Voltage L2", "V", "voltage", "load_voltage_l2", "deye_load_voltage_l2_016", 0.1},
-        {"Load Voltage L3", "V", "voltage", "load_voltage_l3", "deye_load_voltage_l3_017", 0.1},
-        {"PV1 Voltage", "V", "voltage", "pv1_voltage", "deye_pv1_voltage_018", 0.1},
-        {"PV2 Voltage", "V", "voltage", "pv2_voltage", "deye_pv2_voltage_019", 0.1},
-
-        // Current Sensors (scaling /10)
-        {"PV1 Current", "A", "current", "pv1_current", "deye_pv1_current_020", 0.1},
-        {"PV2 Current", "A", "current", "pv2_current", "deye_pv2_current_021", 0.1},
-
-        // Power Sensors
-        {"PV1 Power", "W", "power", "pv1_input_power", "deye_pv1_power_022", 1.0},
-        {"PV2 Power", "W", "power", "pv2_power", "deye_pv2_power_023", 1.0},
-        {"Day Load Power", "W", "power", "day_load_power", "deye_day_load_power_024", 1.0},
-        {"External CT L1 Power", "W", "power", "external_ct_l1_power", "deye_external_ct_l1_power_025", 1.0},
-        {"External CT L2 Power", "W", "power", "external_ct_l2_power", "deye_external_ct_l2_power_026", 1.0},
-        {"External CT L3 Power", "W", "power", "external_ct_l3_power", "deye_external_ct_l3_power_027", 1.0},
-        {"Gen Port Power", "W", "power", "gen_port_power", "deye_gen_port_power_028", 1.0},
-        {"GridSell Power", "W", "power", "gridsell_power", "deye_gridsell_power_029", 1.0},
-        {"Internal CT L1 Power", "W", "power", "internal_ct_l1_power", "deye_internal_ct_l1_power_030", 1.0},
-        {"Internal CT L2 Power", "W", "power", "internal_ct_l2_power", "deye_internal_ct_l2_power_031", 1.0},
-        {"Internal CT L3 Power", "W", "power", "internal_ct_l3_power", "deye_internal_ct_l3_power_032", 1.0},
-        {"Inverter L1 Power", "W", "power", "inverter_l1_power", "deye_inverter_l1_power_033", 1.0},
-        {"Inverter L2 Power", "W", "power", "inverter_l2_power", "deye_inverter_l2_power_034", 1.0},
-        {"Inverter L3 Power", "W", "power", "inverter_l3_power", "deye_inverter_l3_power_035", 1.0},
-        {"Load L1 Power", "W", "power", "load_l1_power", "deye_load_l1_power_036", 1.0},
-        {"Load L2 Power", "W", "power", "load_l2_power", "deye_load_l2_power_037", 1.0},
-        {"Load L3 Power", "W", "power", "load_l3_power", "deye_load_l3_power_038", 1.0},
-        {"Total Grid Power", "W", "power", "total_grid_power", "deye_total_grid_power_039", 1.0},
-        {"Total Load Power", "W", "power", "total_load_power", "deye_total_load_power_040", 1.0},
-        {"Total Active IN Power", "W", "power", "total_active_in_power", "deye_total_active_in_power_041", 1.0},
-
-        // Energy Sensors (scaling /100)
-        {"Daily Battery Charge", "kWh", "energy", "daily_battery_charge", "deye_daily_battery_charge_042", 0.01},
-        {"Daily Battery Discharge", "kWh", "energy", "daily_battery_discharge", "deye_daily_battery_discharge_043", 0.01},
-        {"Daily Energy Bought", "kWh", "energy", "daily_energy_bought", "deye_daily_energy_bought_044", 0.01},
-        {"Daily Energy Sold", "kWh", "energy", "daily_energy_sold", "deye_daily_energy_sold_045", 0.01},
-        {"Daily Load Consumption", "kWh", "energy", "daily_load_consumption", "deye_daily_load_consumption_046", 0.01},
-        {"Daily Production", "kWh", "energy", "daily_production", "deye_daily_production_047", 0.01},
-        {"Total Battery Charge", "kWh", "energy", "total_battery_charge", "deye_total_battery_charge_048", 0.01},
-        {"Total Battery Discharge", "kWh", "energy", "total_battery_discharge", "deye_total_battery_discharge_049", 0.01},
-        {"Total Energy Bought", "kWh", "energy", "total_energy_bought", "deye_total_energy_bought_050", 0.01},
-        {"Total Energy Sold", "kWh", "energy", "total_energy_sold", "deye_total_energy_sold_051", 0.01},
-        {"Total Load Consumption", "kWh", "energy", "total_load_consumption", "deye_total_load_consumption_052", 0.01},
-        {"Total Production", "kWh", "energy", "total_production", "deye_total_production_053", 0.01}
-    };
-}
-
 bool HttpServer_start(const Settings& settings, QHttpServer* server, QJsonObject* data){
     // Define a route for "/sensor"
     server->route("/sensor", QHttpServerRequest::Method::Get, [data] (const QHttpServerRequest &request, QHttpServerResponder &responder) {
@@ -120,8 +49,7 @@ bool loadConfig(const QString &path, QJsonObject &config) {
     return true;
 }
 
-void publishAutoDiscovery(QMqttClient* mqttClient) {
-    const auto sensors = createSensorList();
+void publishAutoDiscovery(QMqttClient* mqttClient, const QVector<DeyeSensor>& sensors) {
     
     for (const auto &sensor : sensors) {
         QJsonObject payload {
@@ -145,7 +73,7 @@ void publishAutoDiscovery(QMqttClient* mqttClient) {
     mqttClient->publish(QMqttTopicName("deye/status"), "online", 1, true);
 }
 
-QMqttClient* setupMqttClient(const QString& id) {
+QMqttClient* setupMqttClient(const QString& id, const QVector<DeyeSensor>& sensors) {
     auto client = new QMqttClient();
     client->setHostname("core-mosquitto");  // HA Mosquitto broker
     client->setUsername("homeassistant");
@@ -154,9 +82,9 @@ QMqttClient* setupMqttClient(const QString& id) {
     client->setClientId("deye-inverter-addon-"+id);
     client->setProtocolVersion(QMqttClient::MQTT_3_1_1);
     
-    QObject::connect(client, &QMqttClient::connected, [client]() {
+    QObject::connect(client, &QMqttClient::connected, [client, sensors]() {
         qDebug() << "MQTT Connected!";
-        publishAutoDiscovery(client);
+        publishAutoDiscovery(client, sensors);
     });
     
     QObject::connect(client, &QMqttClient::errorChanged, [](QMqttClient::ClientError error) {
@@ -246,7 +174,7 @@ int main(int argc, char**argv){
 
     QJsonObject model;
     auto dict = createSensorList();
-    auto mqtt = setupMqttClient(config.device);
+    auto mqtt = setupMqttClient(config.device, dict);
     auto deye = new Deye(config, &model, mqtt, dict);
 
     if(deye == nullptr){
