@@ -11,13 +11,14 @@ bashio::log.info "Loading configuration for Deye Data Collector..."
 DEVICE=$(bashio::config 'device')
 BAUD=$(bashio::config 'baud')
 PARITY=$(bashio::config 'parity')
-DATA_BITS=$(bashio::config 'dataBits')
-STOP_BITS=$(bashio::config 'stopBits')
-RESPONSE_TIME=$(bashio::config 'responseTime')
-RETRIES=$(bashio::config 'numberOfRetries')
+DATA_BITS=$(bashio::config 'data_bits')
+STOP_BITS=$(bashio::config 'stop_bits')
+RESPONSE_TIME=$(bashio::config 'response_time')
+RETRIES=$(bashio::config 'number_of_retries')
 HTTP_PORT=$(bashio::config 'http_port')
 INSTANCE_NAME=$(bashio::config 'instance_name')
-INTERVAL=$(bashio::config 'instance_name')
+INTERVAL=$(bashio::config 'interval')
+HTTP_SERVER=$(bashio::config 'http_server')
 
 # ==============================================================================
 # Log all configuration parameters
@@ -33,13 +34,14 @@ bashio::log.info "[CONFIGURATION] Response Time: ${RESPONSE_TIME} ms"
 bashio::log.info "[CONFIGURATION] Max Retries: ${RETRIES}"
 bashio::log.info "[CONFIGURATION] HTTP Port: ${HTTP_PORT}"
 bashio::log.info "[CONFIGURATION] Interval: ${INTERVAL}"
+bashio::log.info "[CONFIGURATION] HTTP Server: ${HTTP_SERVER}"
 
 bashio::log.green "Configuration validated successfully!"
 
 # ==============================================================================
 # Pass arguments to the application
-# =======================
-# Pass options to your application (adjust command as needed)
+# ==============================================================================
+
 exec /app/src/deye \
     --device "${DEVICE}" \
     --baud "${BAUD}" \
@@ -50,5 +52,6 @@ exec /app/src/deye \
     --retries "${RETRIES}" \
     --http-port "${HTTP_PORT}" \
     --instance "${INSTANCE_NAME}" \
-    --interval "${INTERVAL}"
+    --interval "${INTERVAL}" \
+    --http-server "${HTTP_SERVER}" \
     --loop

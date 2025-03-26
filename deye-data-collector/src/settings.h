@@ -107,7 +107,7 @@ struct Settings{
     }
 
     // QDebug output support
-    friend QDebug operator<<(QDebug debug, const SerialSettings &settings) {
+    friend QDebug operator<<(QDebug debug, const Settings &settings) {
         debug.nospace().noquote() << settings.toString();
         return debug;
     }

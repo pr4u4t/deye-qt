@@ -104,7 +104,7 @@ QMqttClient* Mqtt_clientSetup(const QString& id, const QVector<DeyeSensor>& sens
     
     QObject::connect(client, &QMqttClient::connected, [client, sensors]() {
         qDebug() << "MQTT Connected!";
-        publishAutoDiscovery(client, sensors);
+        Mqtt_publishAutoDiscovery(client, sensors);
     });
     
     QObject::connect(client, &QMqttClient::errorChanged, [](QMqttClient::ClientError error) {
@@ -128,7 +128,7 @@ int main(int argc, char**argv){
     parser.addHelpOption();
     parser.addVersionOption();
 
-    parser.addOption({{"v", "verbosity"}, "Set verbosity level (0-3).", "level"});
+    parser.addOption({{"v", "verbosity"}, "Set verbosity level (0-3).", "verbosity"});
 
     QCommandLineOption loopOption("loop", "Read report in loop");
     parser.addOption(loopOption);
@@ -150,8 +150,8 @@ int main(int argc, char**argv){
     parser.addOption({{"m", "http-server"}, "Whether to start http server or not <true|false>", "httpserver"});
     parser.process(app);
 
-    if (parser.isSet(verbosityOption)) {
-        int level = parser.value(verbosityOption).toInt();
+    if (parser.isSet("verbosity")) {
+        int level = parser.value("verbosity").toInt();
         switch(level) {
             case 0: // Silent
                 QLoggingCategory::setFilterRules("*.debug=false;*.warning=false");
@@ -174,20 +174,23 @@ int main(int argc, char**argv){
     }
     
     const auto conf = parser.value("config");
-    qDebug() 
+    qDebug() << "Using configuration file: " << conf;
     if(conf.size() > 0){
         qInfo() << "Reading configuration from file";
         QJsonObject cnf;
-        loadConfig(conf, cnf);
-        config.fillFromJson(cnf);
-        qDebug() << "Configuration from file: " << config;
+        if(Config_load(conf, cnf) == true){
+            config.fillFromJson(cnf);
+            qDebug() << "Configuration from file: " << config;
+        } else {
+            qDebug() << "Configuration file not found: " << config;
+        }
     }
 
     config.fillFromCmd(parser);
     qDebug() << "Configuration after cmd: " << config;
     
     auto deye = new Deye(config, &model);
-    auto mqtt = setupMqttClient(config.device, deye->sensors());
+    auto mqtt = Mqtt_clientSetup(config.device, deye->sensors());
     deye->setMqtt(mqtt);
 
     if(deye == nullptr){
@@ -196,7 +199,7 @@ int main(int argc, char**argv){
     }
 
     if (!deye->connectDevice()) {
-        qCritical() << 
+        qCritical() << "Failed to connect to inverter";
         return 2;
     }
 
@@ -206,10 +209,8 @@ int main(int argc, char**argv){
         return app.exec();
     }
 
+    timer.setInterval(config.interval);
 
-    
-    timer.setInterval(interval);
-    
     QObject::connect(&timer, &QTimer::timeout, [deye](){
         qDebug() << "Report:" << QDateTime::currentDateTime().toString();
         deye->readReport();

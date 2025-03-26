@@ -1,6 +1,6 @@
 ---
 name: "Deye Data Collector"
-version: "1.1.4"
+version: "1.1.6"
 slug: "voltron_deye"
 description: "Collects data from Deye inverters via serial Modbus and exposes it via REST API."
 url: "https://github.com/pr4u4t/deye-qt"
@@ -18,21 +18,23 @@ options:
   device: "/dev/ttyUSB0"
   baud: 9600
   parity: "none"
-  dataBits: 8
-  stopBits: 1
-  responseTime: 1000
-  numberOfRetries: 3
+  data_bits: 8
+  stop_bits: 1
+  response_time: 1000
+  number_of_retries: 3
   http_port: 8080
+  http_server: false
 schema:
   instance_name: "str"
   device: "str"
   baud: "int"
   parity: "str"
-  dataBits: "int"
-  stopBits: "int"
-  responseTime: "int"
-  numberOfRetries: "int"
+  data_bits: "int"
+  stop_bits: "int"
+  response_time: "int"
+  number_of_retries: "int"
   http_port: "int"
+  http_server: "bool"
 ports:
   "${http_port}/tcp": ${http_port}
 privileged:
