@@ -11,6 +11,7 @@ COPY . /app/
 RUN qmake6 CONFIG+=release && \
     make
 
-RUN chmod +x /app/run.sh
+#RUN chmod +x /app/run.sh
 
-ENTRYPOINT ["/bin/bash", "/app/run.sh"]
+ENTRYPOINT ["/app/src/deye"]
+CMD ["-c", "/data/options.json", "--loop"]
