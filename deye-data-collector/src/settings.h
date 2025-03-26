@@ -81,6 +81,7 @@ struct Settings{
         }
 
         if(hasValue(source, "http-server") == true){
+            qDebug() << source.value("http-server");
             httpserver = source.value("http-server").toInt();
         }
     }
