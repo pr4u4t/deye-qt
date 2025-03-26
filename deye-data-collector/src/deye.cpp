@@ -172,7 +172,7 @@ QVector<DeyeSensor> Deye::createSensorList() const {
         {"Daily Energy Bought", "kWh", "energy", "daily_energy_bought", "deye_daily_energy_bought_044", 0.01, 520},
         {"Daily Energy Sold", "kWh", "energy", "daily_energy_sold", "deye_daily_energy_sold_045", 0.01, 521},
         {"Daily Load Consumption", "kWh", "energy", "daily_load_consumption", "deye_daily_load_consumption_046", 0.01, 526},
-        {"Daily Production", "kWh", "energy", "daily_production", "deye_daily_production_047", 0.01, 529},
+        {"Daily Production", "kWh", "energy", "daily_production", "deye_daily_production_047", 0.1, 529},
         {"Total Battery Charge", "kWh", "energy", "total_battery_charge", "deye_total_battery_charge_048", 0.01, 516},
 //        {"Total Battery Charge", "kWh", "energy", "total_battery_charge", "deye_total_battery_charge_049", 0.01, 517},
         {"Total Battery Discharge", "kWh", "energy", "total_battery_discharge", "deye_total_battery_discharge_050", 0.01, 518},
@@ -183,7 +183,7 @@ QVector<DeyeSensor> Deye::createSensorList() const {
 //        {"Total Energy Sold", "kWh", "energy", "total_energy_sold", "deye_total_energy_sold_054", 0.01, 525},
         {"Total Load Consumption", "kWh", "energy", "total_load_consumption", "deye_total_load_consumption_055", 0.01, 527},
 //        {"Total Load Consumption", "kWh", "energy", "total_load_consumption", "deye_total_load_consumption_056", 0.01, 528},
-        {"Total Production", "kWh", "energy", "total_production", "deye_total_production_057", 0.01, 534},
+        {"Total Production", "kWh", "energy", "total_production", "deye_total_production_057", 0.1, 534},
 //        {"Total Production", "kWh", "energy", "total_production", "deye_total_production_058", 0.01, 535}
     };
 }
