@@ -80,8 +80,8 @@ struct Settings{
             listen = source.value("interval").toInt();
         }
 
-        if(hasValue(source, "httpserver") == true){
-            httpserver = source.value("httpserver").toInt();
+        if(hasValue(source, "http-server") == true){
+            httpserver = source.value("http-server").toInt();
         }
     }
 
@@ -89,9 +89,9 @@ struct Settings{
         return QString(
             "Settings("
             "device: %1, parity: %2, instance: %3, "
-            "baud: %4, dataBits: %5, stopBits: %6, "
-            "responseTime: %7, numberOfRetries: %8, "
-            "listen: %9, interval: %10, httpserver: %11)"
+            "baud: %4, data-bits: %5, stop-bits: %6, "
+            "response-time: %7, number-of-retries: %8, "
+            "listen: %9, interval: %10, http-server: %11)"
         )
         .arg(device)
         .arg(parity)
