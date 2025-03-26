@@ -46,6 +46,7 @@ bool Config_load(const QString &path, QJsonObject &config) {
     }
 
     config = doc.object();
+    qDebug() << "json settings: " << config;
     return true;
 }
 
@@ -128,7 +129,7 @@ int main(int argc, char**argv){
     parser.addHelpOption();
     parser.addVersionOption();
 
-    parser.addOption({{"v", "verbosity"}, "Set verbosity level (0-3).", "verbosity"});
+    parser.addOption({{"e", "verbosity"}, "Set verbosity level (0-3).", "verbosity"});
 
     QCommandLineOption loopOption("loop", "Read report in loop");
     parser.addOption(loopOption);

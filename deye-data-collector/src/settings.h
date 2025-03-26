@@ -117,7 +117,7 @@ struct Settings{
     QString instance = "Instance 1";
     int baud = 9600;
     int dataBits = 8;
-    int stopBits = 2;
+    int stopBits = 1;
     int responseTime = 1000; 
     int numberOfRetries = 3;
     int listen = 8080;
