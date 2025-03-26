@@ -10,10 +10,10 @@ if [ -z "$VERSION" ]; then
 fi
 
 # Update version in config.json
-if [ -f "config.json" ]; then
-    jq --arg ver "$VERSION" '.version = $ver' config.json > config.json.tmp && mv config.json.tmp config.json
-    echo "Updated config.json to version $VERSION"
-fi
+#if [ -f "config.json" ]; then
+#    jq --arg ver "$VERSION" '.version = $ver' config.json > config.json.tmp && mv config.json.tmp config.json
+#    echo "Updated config.json to version $VERSION"
+#fi
 
 # Update version in config.yaml
 if [ -f "config.yaml" ]; then

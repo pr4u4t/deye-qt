@@ -1,6 +1,7 @@
 #ifndef DEYE_H
 #define DEYE_H
 
+#include <QCommandLineParser>
 #include <QModbusRtuSerialClient>
 #include <QSerialPortInfo>
 #include <QVariant>
@@ -63,7 +64,7 @@ class Deye : public QObject {
     Q_OBJECT
 
 public:
-    Deye(const Settings& settings, QJsonObject* model = nullptr, QMqttClient *client = nullptr, QObject* parent = nullptr);
+    Deye(const ModBusSettings& settings, QJsonObject* model = nullptr, QMqttClient *client = nullptr, QObject* parent = nullptr);
 
     ~Deye(){
         if(m_modbusDevice != nullptr){

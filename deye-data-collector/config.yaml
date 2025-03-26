@@ -6,6 +6,7 @@ description: "Collects data from Deye inverters via serial Modbus and exposes it
 url: "https://github.com/pr4u4t/deye-qt"
 startup: "application"
 boot: "auto"
+allow_multiple_instances: true
 arch:
   - armv7
   - armhf
@@ -13,6 +14,7 @@ arch:
   - amd64
   - i386
 options:
+  instance_name: "Deye Instance 1"
   device: "/dev/ttyUSB0"
   baud: 9600
   parity: "none"
@@ -22,6 +24,7 @@ options:
   numberOfRetries: 3
   http_port: 8080
 schema:
+  instance_name: "str"
   device: "str"
   baud: "int"
   parity: "str"
@@ -31,14 +34,13 @@ schema:
   numberOfRetries: "int"
   http_port: "int"
 ports:
-  "8080/tcp": 8080
+  "${http_port}/tcp": ${http_port}
 privileged:
   - SYS_RAWIO
   - SYS_ADMIN
-devices:
-  - "/dev/ttyUSB0:/dev/ttyUSB0:rwm"
 map:
   - config
-webui: "http://[HOST]:[PORT:8080]"
+webui: "http://[HOST]:[PORT:${http_port}]"
 ingress: true
 image: "ghcr.io/pr4u4t/deye-data-collector"
+data_dir: /data/${INSTANCE}

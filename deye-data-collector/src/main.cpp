@@ -29,7 +29,7 @@ bool HttpServer_start(const Settings& settings, QHttpServer* server, QJsonObject
     return true;
 }
 
-bool loadConfig(const QString &path, QJsonObject &config) {
+bool Config_load(const QString &path, QJsonObject &config) {
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Failed to open config file:" << path;
@@ -49,7 +49,27 @@ bool loadConfig(const QString &path, QJsonObject &config) {
     return true;
 }
 
-void publishAutoDiscovery(QMqttClient* mqttClient, const QVector<DeyeSensor>& sensors) {
+void SerialPort_dump(){
+    const auto serialPortInfos = QSerialPortInfo::availablePorts();
+    for (const QSerialPortInfo &portInfo : serialPortInfos) {
+        qDebug() << "\n"
+                << "Port:" << portInfo.portName() << "\n"
+                << "Location:" << portInfo.systemLocation() << "\n"
+                << "Description:" << portInfo.description() << "\n"
+                << "Manufacturer:" << portInfo.manufacturer() << "\n"
+                << "Serial number:" << portInfo.serialNumber() << "\n"
+                << "Vendor Identifier:"
+                << (portInfo.hasVendorIdentifier()
+                    ? QByteArray::number(portInfo.vendorIdentifier(), 16)
+                    : QByteArray()) << "\n"
+                << "Product Identifier:"
+                << (portInfo.hasProductIdentifier()
+                    ? QByteArray::number(portInfo.productIdentifier(), 16)
+                    : QByteArray());
+    }
+}
+
+void Mqtt_publishAutoDiscovery(QMqttClient* mqttClient, const QVector<DeyeSensor>& sensors) {
     
     for (const auto &sensor : sensors) {
         QJsonObject payload {
@@ -73,7 +93,7 @@ void publishAutoDiscovery(QMqttClient* mqttClient, const QVector<DeyeSensor>& se
     mqttClient->publish(QMqttTopicName("deye/status"), "online", 1, true);
 }
 
-QMqttClient* setupMqttClient(const QString& id, const QVector<DeyeSensor>& sensors) {
+QMqttClient* Mqtt_clientSetup(const QString& id, const QVector<DeyeSensor>& sensors) {
     auto client = new QMqttClient();
     client->setHostname("core-mosquitto");  // HA Mosquitto broker
     client->setUsername("homeassistant");
@@ -96,14 +116,19 @@ QMqttClient* setupMqttClient(const QString& id, const QVector<DeyeSensor>& senso
 }
 
 int main(int argc, char**argv){
-    QCoreApplication app(argc, argv);
-    
+    Settings config;
     QCommandLineParser parser;
+    QJsonObject model;
+    QTimer timer;
+
+    QCoreApplication app(argc, argv);
+    qSetMessagePattern("[%{time yyyyMMdd h:mm:ss.zzz t} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif}] %{file}:%{line} - %{message}");
+
     parser.setApplicationDescription("Deye Modbus Client");
     parser.addHelpOption();
     parser.addVersionOption();
-    QCommandLineOption verboseOption("verbose", "Verbose mode");
-    parser.addOption(verboseOption);
+
+    parser.addOption({{"v", "verbosity"}, "Set verbosity level (0-3).", "level"});
 
     QCommandLineOption loopOption("loop", "Read report in loop");
     parser.addOption(loopOption);
@@ -114,77 +139,64 @@ int main(int argc, char**argv){
     parser.addOption({{"d", "device"}, "Open serial port <device>.", "device"});
     parser.addOption({{"p", "parity"}, "Set parity (none, even, odd, mark, space).", "parity"});
     parser.addOption({{"b", "baud"}, "Set baud rate (e.g., 9600, 115200).", "baud"});
-    parser.addOption({{"l", "dataBits"}, "Set number of data bits (5, 6, 7, or 8).", "dataBits"});
-    parser.addOption({{"s", "stopBits"}, "Set number of stop bits (1 or 2).", "stopBits"});
-    parser.addOption({{"t", "responseTime"}, "Set response timeout in milliseconds.", "responseTime"}); 
-    parser.addOption({{"r", "numberOfRetries"}, "Set number of retries for communication errors.", "numberOfRetries"});
+    parser.addOption({{"l", "data-bits"}, "Set number of data bits (5, 6, 7, or 8).", "dataBits"});
+    parser.addOption({{"s", "stop-bits"}, "Set number of stop bits (1 or 2).", "stopBits"});
+    parser.addOption({{"t", "response-time"}, "Set response timeout in milliseconds.", "responseTime"}); 
+    parser.addOption({{"r", "number-of-retries"}, "Set number of retries for communication errors.", "numberOfRetries"});
     parser.addOption({{"i", "interval"}, "Loop <interval>.", "interval"});
     parser.addOption({{"c", "config"}, "Configuration file path", "config"});
     parser.addOption({{"n", "listen"}, "Listen port number", "listen"});
+    parser.addOption({{"a", "instance"}, "Instance name", "instance"});
+    parser.addOption({{"m", "http-server"}, "Whether to start http server or not <true|false>", "httpserver"});
     parser.process(app);
 
-    if (parser.isSet(verboseOption)){
-        QLoggingCategory::setFilterRules("qt.modbus* = true");
+    if (parser.isSet(verbosityOption)) {
+        int level = parser.value(verbosityOption).toInt();
+        switch(level) {
+            case 0: // Silent
+                QLoggingCategory::setFilterRules("*.debug=false;*.warning=false");
+                break;
+            case 1: // Minimal
+                QLoggingCategory::setFilterRules("*.debug=false;*.warning=true");
+                break;
+            case 2: // Medium
+                QLoggingCategory::setFilterRules("*.debug=true;qt.*.debug=false");
+                break;
+            case 3: // Maximum
+                QLoggingCategory::setFilterRules("*.debug=true");
+                break;
+        }
     }
     
     if (parser.isSet(portsOption)){
-        const auto serialPortInfos = QSerialPortInfo::availablePorts();
-        for (const QSerialPortInfo &portInfo : serialPortInfos) {
-            qDebug() << "\n"
-                    << "Port:" << portInfo.portName() << "\n"
-                    << "Location:" << portInfo.systemLocation() << "\n"
-                    << "Description:" << portInfo.description() << "\n"
-                    << "Manufacturer:" << portInfo.manufacturer() << "\n"
-                    << "Serial number:" << portInfo.serialNumber() << "\n"
-                    << "Vendor Identifier:"
-                    << (portInfo.hasVendorIdentifier()
-                        ? QByteArray::number(portInfo.vendorIdentifier(), 16)
-                        : QByteArray()) << "\n"
-                    << "Product Identifier:"
-                    << (portInfo.hasProductIdentifier()
-                        ? QByteArray::number(portInfo.productIdentifier(), 16)
-                        : QByteArray());
-        }
-
+        SerialPort_dump();
         return 0;
     }
-
+    
     const auto conf = parser.value("config");
-    Settings config;
-
+    qDebug() 
     if(conf.size() > 0){
         qInfo() << "Reading configuration from file";
         QJsonObject cnf;
         loadConfig(conf, cnf);
         config.fillFromJson(cnf);
+        qDebug() << "Configuration from file: " << config;
     }
-    
+
     config.fillFromCmd(parser);
-
-    if (parser.isSet(verboseOption)){
-        qDebug() << "Device:" << config.device;
-        qDebug() << "Parity:" << config.parity;
-        qDebug() << "Baud rate:" << config.baud;
-        qDebug() << "Data bits:" << config.dataBits;
-        qDebug() << "Stop bits:" << config.stopBits;
-        qDebug() << "Response time (ms):" << config.responseTime;
-        qDebug() << "Number of retries:" << config.numberOfRetries;
-        qDebug() << "Listen: " << config.listen;
-    }
-
-    QJsonObject model;
+    qDebug() << "Configuration after cmd: " << config;
+    
     auto deye = new Deye(config, &model);
     auto mqtt = setupMqttClient(config.device, deye->sensors());
     deye->setMqtt(mqtt);
+
     if(deye == nullptr){
+        qCritical() << "Failed to create deye instance";
         return 1;
-    }
-    
-    if (parser.isSet(verboseOption)){
-        qDebug() << deye;
     }
 
     if (!deye->connectDevice()) {
+        qCritical() << 
         return 2;
     }
 
@@ -194,12 +206,8 @@ int main(int argc, char**argv){
         return app.exec();
     }
 
-    auto interval = parser.value("interval").toInt();
-    if(interval == 0){
-        interval = 5000;
-    }
 
-    QTimer timer;
+    
     timer.setInterval(interval);
     
     QObject::connect(&timer, &QTimer::timeout, [deye](){
@@ -213,8 +221,6 @@ int main(int argc, char**argv){
 
     QHttpServer server;
     HttpServer_start(config, &server, &model);
-
-    
 
     return app.exec();
 }
