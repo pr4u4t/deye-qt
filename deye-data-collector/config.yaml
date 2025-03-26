@@ -1,6 +1,6 @@
 ---
 name: "Deye Data Collector"
-version: "1.1.7"
+version: "1.1.8"
 slug: "voltron_deye"
 description: "Collects data from Deye inverters via serial Modbus and exposes it via REST API."
 url: "https://github.com/pr4u4t/deye-qt"
@@ -42,7 +42,6 @@ privileged:
   - SYS_ADMIN
 map:
   - config
-webui: "http://[HOST]:[PORT:${http_port}]"
 ingress: true
 image: "ghcr.io/pr4u4t/deye-data-collector"
 data_dir: /data/${INSTANCE}
