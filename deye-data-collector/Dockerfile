@@ -9,4 +9,6 @@ COPY . /app/
 RUN qmake6 CONFIG+=release && \
     make
 
-ENTRYPOINT ["/app/run.sh"]
+RUN chmod +x /app/run.sh
+
+ENTRYPOINT ["/bin/bash", "/app/run.sh"]

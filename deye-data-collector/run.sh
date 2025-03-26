@@ -1,57 +1,46 @@
-#!/usr/bin/with-contenv bashio
-# shellcheck shell=bash
+#!/bin/sh
+set -euo pipefail
 
-# ==============================================================================
-# Read configuration options from Home Assistant
-# ==============================================================================
+# Mandatory parameter check
+DEVICE=${DEVICE:?"FATAL: Device path not configured - check add-on settings"}
 
-bashio::log.info "Loading configuration for Deye Data Collector..."
+# Default values with debug output
+echo "=== Deye Data Collector Configuration ==="
+echo "Core Parameters:"
+echo "  Device path:    ${DEVICE}"
+echo "  Baud rate:      ${BAUD:-9600} (default: 9600)"
+echo "  Parity:         ${PARITY:-none} (default: none)"
+echo "  Data bits:      ${DATA_BITS:-8} (default: 8)"
+echo "  Stop bits:      ${STOP_BITS:-1} (default: 1)"
+echo "Advanced Settings:"
+echo "  Response time:  ${RESPONSE_TIME:-1000}ms (default: 1000)"
+echo "  Retry attempts: ${NUMBER_OF_RETRIES:-3} (default: 3)"
+echo "  HTTP port:      ${HTTP_PORT:-8080} (default: 8080)"
+echo "  HTTP server:    ${HTTP_SERVER:-false} (default: false)"
+echo "  Interval:	${INTERVAL:-5000} (default: 5000)"
+echo "Instance Info:"
+echo "  Instance name:  ${INSTANCE_NAME:-Deye Instance}"
+echo "  Add-on version: ${VERSION:-unknown}"
+echo "========================================"
 
-# Required parameters
-DEVICE=$(bashio::config 'device')
-BAUD=$(bashio::config 'baud')
-PARITY=$(bashio::config 'parity')
-DATA_BITS=$(bashio::config 'data_bits')
-STOP_BITS=$(bashio::config 'stop_bits')
-RESPONSE_TIME=$(bashio::config 'response_time')
-RETRIES=$(bashio::config 'number_of_retries')
-HTTP_PORT=$(bashio::config 'http_port')
-INSTANCE_NAME=$(bashio::config 'instance_name')
-INTERVAL=$(bashio::config 'interval')
-HTTP_SERVER=$(bashio::config 'http_server')
+# Build argument array with debug logging
+ARGS=(
+  "--device" "${DEVICE}"
+  "--baud" "${BAUD:-9600}"
+  "--parity" "${PARITY:-none}"
+  "--data-bits" "${DATA_BITS:-8}"
+  "--stop-bits" "${STOP_BITS:-1}"
+  "--response-time" "${RESPONSE_TIME:-1000}"
+  "--number-of-retries" "${NUMBER_OF_RETRIES:-3}"
+  "--http-port" "${HTTP_PORT:-8080}"
+  "--instance" "${INSTANCE_NAME:-Deye Instance}"
+  "--interval" "${INTERVAL:-5000}"
+  "--http-server" "${HTTP_SERVER:-false}"
+  "--loop"
+)
 
-# ==============================================================================
-# Log all configuration parameters
-# ==============================================================================
 
-bashio::log.info "[CONFIGURATION] Instance Name: ${INSTANCE_NAME}"
-bashio::log.info "[CONFIGURATION] Device Path: ${DEVICE}"
-bashio::log.info "[CONFIGURATION] Baud Rate: ${BAUD}"
-bashio::log.info "[CONFIGURATION] Parity: ${PARITY}"
-bashio::log.info "[CONFIGURATION] Data Bits: ${DATA_BITS}"
-bashio::log.info "[CONFIGURATION] Stop Bits: ${STOP_BITS}"
-bashio::log.info "[CONFIGURATION] Response Time: ${RESPONSE_TIME} ms"
-bashio::log.info "[CONFIGURATION] Max Retries: ${RETRIES}"
-bashio::log.info "[CONFIGURATION] HTTP Port: ${HTTP_PORT}"
-bashio::log.info "[CONFIGURATION] Interval: ${INTERVAL}"
-bashio::log.info "[CONFIGURATION] HTTP Server: ${HTTP_SERVER}"
+echo "[STARTUP] Initializing Deye collector with ${#ARGS[@]} parameters"
 
-bashio::log.green "Configuration validated successfully!"
-
-# ==============================================================================
-# Pass arguments to the application
-# ==============================================================================
-
-exec /app/src/deye \
-    --device "${DEVICE}" \
-    --baud "${BAUD}" \
-    --parity "${PARITY}" \
-    --data-bits "${DATA_BITS}" \
-    --stop-bits "${STOP_BITS}" \
-    --response-time "${RESPONSE_TIME}" \
-    --retries "${RETRIES}" \
-    --http-port "${HTTP_PORT}" \
-    --instance "${INSTANCE_NAME}" \
-    --interval "${INTERVAL}" \
-    --http-server "${HTTP_SERVER}" \
-    --loop
+# Execute with proper signal handling
+exec /app/src/deye "${ARGS[@]}"
