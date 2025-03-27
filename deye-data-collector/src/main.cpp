@@ -144,15 +144,15 @@ int main(int argc, char**argv){
     parser.addOption({{"d", "device"}, "Open serial port <device>.", "device"});
     parser.addOption({{"p", "parity"}, "Set parity (none, even, odd, mark, space).", "parity"});
     parser.addOption({{"b", "baud"}, "Set baud rate (e.g., 9600, 115200).", "baud"});
-    parser.addOption({{"l", "data-bits"}, "Set number of data bits (5, 6, 7, or 8).", "dataBits"});
-    parser.addOption({{"s", "stop-bits"}, "Set number of stop bits (1 or 2).", "stopBits"});
-    parser.addOption({{"t", "response-time"}, "Set response timeout in milliseconds.", "responseTime"}); 
-    parser.addOption({{"r", "number-of-retries"}, "Set number of retries for communication errors.", "numberOfRetries"});
+    parser.addOption({{"l", "data_bits"}, "Set number of data bits (5, 6, 7, or 8).", "dataBits"});
+    parser.addOption({{"s", "stop_bits"}, "Set number of stop bits (1 or 2).", "stopBits"});
+    parser.addOption({{"t", "response_time"}, "Set response timeout in milliseconds.", "responseTime"}); 
+    parser.addOption({{"r", "number_of_retries"}, "Set number of retries for communication errors.", "numberOfRetries"});
     parser.addOption({{"i", "interval"}, "Loop <interval>.", "interval"});
     parser.addOption({{"c", "config"}, "Configuration file path", "config"});
     parser.addOption({{"n", "listen"}, "Listen port number", "listen"});
     parser.addOption({{"a", "instance"}, "Instance name", "instance"});
-    parser.addOption({{"m", "http-server"}, "Whether to start http server or not <true|false>", "httpserver"});
+    parser.addOption({{"m", "http_server"}, "Whether to start http server or not <true|false>", "httpserver"});
     parser.process(app);
 
     if (parser.isSet("verbosity")) {

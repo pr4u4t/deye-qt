@@ -56,20 +56,20 @@ struct Settings{
             baud = source.value("baud").toInt();
         }
 
-        if(hasValue(source, "data-bits") == true){
-            dataBits = source.value("data-bits").toInt();
+        if(hasValue(source, "data_bits") == true){
+            dataBits = source.value("data_bits").toInt();
         }
 
-        if(hasValue(source, "stop-bits") == true){
-            stopBits = source.value("stop-bits").toInt();
+        if(hasValue(source, "stop_bits") == true){
+            stopBits = source.value("stop_bits").toInt();
         }
 
-        if(hasValue(source, "response-time") == true){
-            responseTime = source.value("response-time").toInt();
+        if(hasValue(source, "response_time") == true){
+            responseTime = source.value("response_time").toInt();
         }
 
-        if(hasValue(source, "number-of-retries") == true){ 
-            numberOfRetries = source.value("number-of-retries").toInt();
+        if(hasValue(source, "number_of_retries") == true){ 
+            numberOfRetries = source.value("number_of_retries").toInt();
         }
 
         if(hasValue(source, "listen") == true){
@@ -80,9 +80,9 @@ struct Settings{
             listen = source.value("interval").toInt();
         }
 
-        if(hasValue(source, "http-server") == true){
-            qDebug() << source.value("http-server");
-            httpserver = source.value("http-server").toInt();
+        if(hasValue(source, "http_server") == true){
+            qDebug() << "http_server found:" << source.value("http_server");
+            httpserver = source.value("http_server").toInt();
         }
     }
 
@@ -90,9 +90,9 @@ struct Settings{
         return QString(
             "Settings("
             "device: %1, parity: %2, instance: %3, "
-            "baud: %4, data-bits: %5, stop-bits: %6, "
-            "response-time: %7, number-of-retries: %8, "
-            "listen: %9, interval: %10, http-server: %11)"
+            "baud: %4, data_bits: %5, stop_bits: %6, "
+            "response_time: %7, number_of_retries: %8, "
+            "listen: %9, interval: %10, http_server: %11)"
         )
         .arg(device)
         .arg(parity)
