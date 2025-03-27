@@ -9,9 +9,28 @@
 #include <QJsonObject>
 #include <QMqttClient>
 #include <QVector>
+#include <QStack>
 
 #include "utils.h"
 #include "settings.h"
+
+enum class SensorDataType{
+    SHORT = 0,
+    USHORT,
+    SSHORT,
+    DWORD
+};
+
+struct dshort {
+    qint16 low;
+    qint16 high;
+};
+
+union SensorData {
+    float result;
+    qint32 data;
+    dshort words;
+};
 
 struct DeyeSensor {
     QString name;
@@ -21,6 +40,23 @@ struct DeyeSensor {
     QString uniqueId;
     float scalingFactor;
     int address;
+    SensorDataType type;
+    float data;
+
+    QString typeString(SensorDataType type) const{
+        switch(type){
+            case SensorDataType::SSHORT:
+                return "signed short";
+            case SensorDataType::SHORT:
+                return "short";
+            case SensorDataType::USHORT:
+                return "unsigned short";
+            case SensorDataType::DWORD:
+                return "dword";
+        }
+
+        return "unknown type";
+    }
 
     // Add this method
     QString toString() const {
@@ -31,14 +67,16 @@ struct DeyeSensor {
                       "topicSuffix: '%4', "
                       "uniqueId: '%5', "
                       "scalingFactor: %6, " 
-                      "address: %7 }")
+                      "address: %7, " 
+                      "type: %8 }")
             .arg(name)
             .arg(unit)
             .arg(deviceClass)
             .arg(topicSuffix)
             .arg(uniqueId)
             .arg(scalingFactor)
-            .arg(address);
+            .arg(address)
+            .arg(typeString(type));
     }
 
     friend QDebug operator<<(QDebug debug, const DeyeSensor &sensor) {
@@ -55,7 +93,8 @@ struct DeyeSensor {
             {"topic_suffix", topicSuffix},
             {"unique_id", uniqueId},
             {"scaling_factor", scalingFactor},
-            {"address", address}
+            {"address", address},
+            {"type", typeString(type)}
         };
     }
 };
@@ -101,17 +140,22 @@ protected slots:
 protected:
     QModbusDataUnit readRequest(int startAddress, int numRegisters);
 
-    std::optional<const DeyeSensor> find(int address) const; 
+    int find(int address) const; 
 
-    void updateSensor(const DeyeSensor &sensor, float rawValue);
+    void updateSensor(DeyeSensor &sensor, const QModbusDataUnit& unit);
 
 private:
+    float sensorValue(const /*signed*/ qint16 data, float scale) const; //<<<--- signed short
+    float sensorValue(const /*unsigned*/ quint16 data, float scale) const; //<<<--- unsigned short
+    float sensorValue(const /*signed*/ qint16 low, const qint16 high, float scale) const;
+
     QVector<DeyeSensor> createSensorList() const;
 
     QModbusRtuSerialClient* m_modbusDevice = nullptr;
     QJsonObject* m_model = nullptr;
     QMqttClient* m_client = nullptr;
     QVector<DeyeSensor> m_dict;
+    QStack<int> m_ops;
 };
 
 #endif

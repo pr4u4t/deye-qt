@@ -121,6 +121,7 @@ int main(int argc, char**argv){
     QCommandLineParser parser;
     QJsonObject model;
     QTimer timer;
+    QHttpServer server;
 
     qDebug() << "***************************************************************";
     qDebug() << "*                  STARTING INVERTER                          *";
@@ -199,21 +200,23 @@ int main(int argc, char**argv){
     deye->setMqtt(mqtt);
 
     if(deye == nullptr){
-        qCritical() << "Failed to create deye instance";
+        qCritical() << "Failed to create deye instance... quitting";
         return 1;
     }
 
     if (!deye->connectDevice()) {
-        qCritical() << "Failed to connect to inverter";
+        qCritical() << "Failed to connect to inverter... quitting";
         return 2;
     }
 
     if(parser.isSet(loopOption) == false){
+        qDebug() << "Performing single read";
         deye->readReport();
         QTimer::singleShot(5000, &QCoreApplication::quit);
         return app.exec();
     }
 
+    qDebug() << "Starting loop mode";
     timer.setInterval(config.interval);
 
     QObject::connect(&timer, &QTimer::timeout, [deye](){
@@ -223,10 +226,10 @@ int main(int argc, char**argv){
 
     timer.start();
 
-    //-------------------------
-
-    QHttpServer server;
-    HttpServer_start(config, &server, &model);
+    if(config.httpserver){
+        qDebug() << "Starting http server";
+        HttpServer_start(config, &server, &model);
+    }
 
     return app.exec();
 }
