@@ -34,8 +34,16 @@ struct Settings{
 	    return value.toString();
     }
 
-    QString convert(const QString& value)const{
+    QString convert(const QString& value) const{
         return value;
+    }
+
+    bool toBool(const QString& str) const {
+        return (str == "true") ? true : false;
+    }
+
+    bool toBool(const QJsonValue& val) const {
+        return val.toBool();
     }
 
     template<typename T>
@@ -81,8 +89,7 @@ struct Settings{
         }
 
         if(hasValue(source, "http_server") == true){
-            qDebug() << "http_server found:" << source.value("http_server");
-            httpserver = source.value("http_server").toInt();
+            httpserver = toBool(source.value("http_server"));
         }
     }
 
