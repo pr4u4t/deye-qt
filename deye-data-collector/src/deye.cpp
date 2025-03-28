@@ -58,11 +58,13 @@ void Deye::onReadReady(QModbusReply* reply, int startAddress){
     }
 
     if (reply->error() == QModbusDevice::NoError) {
+        qDebug() << "processing reply for address: " << startAddress;
         const QModbusDataUnit unit = reply->result();
-        const auto addr = unit.startAddress(); 
-        auto k = find(addr);
-        auto d = m_ops.indexOf(addr);
+        
+        auto k = find(startAddress);
+        auto d = m_ops.indexOf(startAddress);
         if(d != -1){
+            qDebug() << "removing startAddress:" << startAddress << "from queue";
             m_ops.removeAt(d);
         } else {
             qDebug() << "address:" << addr <<" not found on stack";
