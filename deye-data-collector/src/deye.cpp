@@ -75,9 +75,10 @@ void Deye::onReadReady(QModbusReply* reply){
             qDebug() << "address: " << addr << "not found";
         }
     } else {
-        qDebug() << "Read error";
         QModbusDataUnit request = reply->request();
         const auto failedAddr = request.startAddress();
+        qDebug() << "Read error for address: " << failedAddr;
+        
         auto d = m_ops.indexOf(failedAddr);
         if(d != -1){
             m_ops.removeAt(d);
