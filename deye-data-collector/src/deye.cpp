@@ -138,7 +138,7 @@ QVector<DeyeSensor> Deye::createSensorList() const {
 
         // Battery Sensors
         {"Battery SOC", "%", "battery", "battery_soc", "deye_battery_capacity_004", 1.0, 588, SensorDataType::SHORT, 0},
-        {"Battery SOH", "%", "battery", "battery_soh", "deye_battery_soh_005", 1.0, 10006, SensorDataType::SHORT, 0},
+        //{"Battery SOH", "%", "battery", "battery_soh", "deye_battery_soh_005", 1.0, 10006, SensorDataType::SHORT, 0},
         {"Battery Current", "mA", "current", "battery_current", "deye_battery_current_006", 0.01, 591, SensorDataType::SSHORT, 0},
         {"Battery Power", "W", "power", "battery_power", "deye_battery_power_007", 1.0, 590, SensorDataType::SSHORT, 0},
         {"Battery Voltage", "V", "voltage", "battery_voltage", "deye_battery_voltage_008", 0.01, 587, SensorDataType::USHORT, 0},
