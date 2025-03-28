@@ -113,13 +113,15 @@ void Deye::read(int startAddress, int numRegisters, int serverAddress){
         if (!reply->isFinished()){
             m_ops.push(startAddress);
             QObject::connect(reply, &QModbusReply::finished, [this, reply, startAddress](){
+                qDebug() << "Reply finished";
                 this->onReadReady(reply, startAddress);
             });
         } else {
+            qDebug() << "broadcast replies return immediately";
             delete reply; // broadcast replies return immediately
         }
     } else {
-        qCritical() << QString("Read error: %1").arg(m_modbusDevice->errorString());
+        qCritical() << QString("Read error: %1 for address: %2").arg(m_modbusDevice->errorString()).arg(startAddress);
     }
 }
 
