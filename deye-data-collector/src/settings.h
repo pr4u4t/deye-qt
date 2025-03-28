@@ -31,7 +31,7 @@ struct Settings{
 
     template<typename T>
     QString convert(const T& value) const{
-	    return value.toString();
+        return value.toString();
     }
 
     QString convert(const QString& value) const{
@@ -91,6 +91,10 @@ struct Settings{
         if(hasValue(source, "http_server") == true){
             httpserver = toBool(source.value("http_server"));
         }
+
+        if(hasValue(source, "mqtt_client") == true){
+            mqttclient = toBool(source.value("mqtt_client"));
+        }
     }
 
     QString toString() const {
@@ -99,7 +103,8 @@ struct Settings{
             "device: %1, parity: %2, instance: %3, "
             "baud: %4, data_bits: %5, stop_bits: %6, "
             "response_time: %7, number_of_retries: %8, "
-            "listen: %9, interval: %10, http_server: %11)"
+            "listen: %9, interval: %10, http_server: %11,"
+            "mqtt_client: %12)"
         )
         .arg(device)
         .arg(parity)
@@ -111,7 +116,8 @@ struct Settings{
         .arg(numberOfRetries)
         .arg(listen)
         .arg(interval)
-        .arg(httpserver);
+        .arg(httpserver)
+        .arg(mqttclient);
     }
 
     // QDebug output support
@@ -131,6 +137,7 @@ struct Settings{
     int listen = 8080;
     int interval = 5000;
     bool httpserver = false;
+    bool mqttclient = false;
 };
 
 #endif

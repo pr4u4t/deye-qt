@@ -154,6 +154,8 @@ int main(int argc, char**argv){
     parser.addOption({{"n", "listen"}, "Listen port number", "listen"});
     parser.addOption({{"a", "instance"}, "Instance name", "instance"});
     parser.addOption({{"m", "http_server"}, "Whether to start http server or not <true|false>", "httpserver"});
+    parser.addOption({{"q", "mqtt_client"}, "Whether to use mqtt client<true|false>", "mqttclient"});
+
     parser.process(app);
 
     if (parser.isSet("verbosity")) {
@@ -180,7 +182,7 @@ int main(int argc, char**argv){
     }
     
     const auto conf = parser.value("config");
-    qDebug() << "Using configuration file: " << conf;
+    
     if(conf.size() > 0){
         qInfo() << "Reading configuration from file";
         QJsonObject cnf;
@@ -190,18 +192,22 @@ int main(int argc, char**argv){
         } else {
             qDebug() << "Configuration file not found: " << config;
         }
+    } else {
+        qDebug() << "Configuration file path empty";
     }
 
     config.fillFromCmd(parser);
     qDebug() << "Configuration after cmd: " << config;
     
     auto deye = new Deye(config, &model);
-    auto mqtt = Mqtt_clientSetup(config.device, deye->sensors());
-    deye->setMqtt(mqtt);
 
     if(deye == nullptr){
         qCritical() << "Failed to create deye instance... quitting";
         return 1;
+    }
+
+    if(config.mqttclient){
+        deye->setMqtt(Mqtt_clientSetup(config.device, deye->sensors()));
     }
 
     if (!deye->connectDevice()) {
@@ -212,7 +218,8 @@ int main(int argc, char**argv){
     if(parser.isSet(loopOption) == false){
         qDebug() << "Performing single read";
         deye->readReport();
-        QTimer::singleShot(5000, &QCoreApplication::quit);
+        QObject::connect(deye, &Deye::reportReady, QCoreApplication::instance(), &QCoreApplication::quit);
+        //QTimer::singleShot(5000, &QCoreApplication::quit);
         return app.exec();
     }
 
