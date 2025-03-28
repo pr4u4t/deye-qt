@@ -76,7 +76,12 @@ void Deye::onReadReady(QModbusReply* reply){
         }
     } else {
         qDebug() << "Read error";
-        m_ops.pop_back();
+        QModbusDataUnit request = reply->request();
+        const auto failedAddr = request.startAddress();
+        auto d = m_ops.indexOf(failedAddr);
+        if(d != -1){
+            m_ops.removeAt(d);
+        }
 
         if (reply->error() == QModbusDevice::ProtocolError) {
             qDebug() << QString("Read response error: %1 (Modbus exception: 0x%2)").
