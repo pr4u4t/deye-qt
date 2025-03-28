@@ -230,7 +230,7 @@ float Deye::sensorValue(const /*signed*/ qint16 low, const qint16 high, float sc
 }
 
 void Deye::updateSensor(DeyeSensor &sensor, const QModbusDataUnit& unit) {
-
+    qDebug() << "Update sensor " << sensor.address;
     switch(sensor.type){
         case SensorDataType::SSHORT:
         case SensorDataType::SHORT:
