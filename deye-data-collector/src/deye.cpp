@@ -64,6 +64,8 @@ void Deye::onReadReady(QModbusReply* reply){
         auto d = m_ops.indexOf(addr);
         if(d != -1){
             m_ops.removeAt(d);
+        } else {
+            qDebug() << "address:" << addr <<" not found on stack";
         }
             
         if(k != -1){
@@ -72,14 +74,19 @@ void Deye::onReadReady(QModbusReply* reply){
         } else {
             qDebug() << "address: " << addr << "not found";
         }
-    } else if (reply->error() == QModbusDevice::ProtocolError) {
-        qDebug() << QString("Read response error: %1 (Modbus exception: 0x%2)").
+    } else {
+        qDebug() << "Read error";
+        m_ops.pop();
+
+        if (reply->error() == QModbusDevice::ProtocolError) {
+            qDebug() << QString("Read response error: %1 (Modbus exception: 0x%2)").
                                     arg(reply->errorString()).
                                     arg(reply->rawResult().exceptionCode(), -1, 16);
-    } else {
-        qDebug() << QString("Read response error: %1 (code: 0x%2)").
+        } else {
+            qDebug() << QString("Read response error: %1 (code: 0x%2)").
                                     arg(reply->errorString()).
                                     arg(reply->error(), -1, 16);
+        }
     }
 
     reply->deleteLater();
