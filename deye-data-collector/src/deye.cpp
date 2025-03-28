@@ -260,6 +260,15 @@ void Deye::updateSensor(DeyeSensor &sensor, const QModbusDataUnit& unit) {
 void Deye::readReport(){
     qDebug() << "Performing read request, current ops: " << m_ops.size();
     for(const auto& sensor : m_dict){
-        read(sensor.address, 1);
+        switch(sensor.type){
+            case SensorDataType::SHORT:
+            case SensorDataType::USHORT:
+            case SensorDataType::SSHORT:
+                read(sensor.address, 1);
+                break;
+            case SensorDataType::DWORD
+                read(sensor.address, 2);
+                break;
+        }
     }
 }
