@@ -14,4 +14,4 @@ RUN qmake6 CONFIG+=release && \
 #RUN chmod +x /app/run.sh
 
 ENTRYPOINT ["/app/src/deye"]
-CMD ["-c", "/data/options.json", "--loop"]
+CMD ["-c", "/data/options.json", "--loop", "--mqtt_client", "true"]
