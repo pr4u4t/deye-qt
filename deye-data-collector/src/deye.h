@@ -147,7 +147,7 @@ signals:
 
 protected slots:
 
-    void onReadReady(QModbusReply* reply);
+    void onReadReady(QModbusReply* reply, int startAddress);
 
 protected:
     QModbusDataUnit readRequest(int startAddress, int numRegisters);

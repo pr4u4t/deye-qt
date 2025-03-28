@@ -51,7 +51,7 @@ QModbusDataUnit Deye::readRequest(int startAddress, int numRegisters){
     return QModbusDataUnit(QModbusDataUnit::HoldingRegisters, startAddress, numRegisters);
 }
 
-void Deye::onReadReady(QModbusReply* reply){
+void Deye::onReadReady(QModbusReply* reply, int startAddress){
     if (reply == nullptr){
         qDebug() << "reply was empty";
         return;
@@ -75,11 +75,9 @@ void Deye::onReadReady(QModbusReply* reply){
             qDebug() << "address: " << addr << "not found";
         }
     } else {
-        QModbusDataUnit request = reply->request();
-        const auto failedAddr = request.startAddress();
-        qDebug() << "Read error for address: " << failedAddr;
+        qDebug() << "Read error for address: " << startAddress;
         
-        auto d = m_ops.indexOf(failedAddr);
+        auto d = m_ops.indexOf(startAddress);
         if(d != -1){
             m_ops.removeAt(d);
         }
@@ -114,8 +112,8 @@ void Deye::read(int startAddress, int numRegisters, int serverAddress){
     if (auto *reply = m_modbusDevice->sendReadRequest(readRequest(startAddress, numRegisters), serverAddress)) {
         if (!reply->isFinished()){
             m_ops.push(startAddress);
-            QObject::connect(reply, &QModbusReply::finished, [this, reply](){
-                this->onReadReady(reply);
+            QObject::connect(reply, &QModbusReply::finished, [this, reply, startAddress](){
+                this->onReadReady(reply, startAddress);
             });
         } else {
             delete reply; // broadcast replies return immediately
