@@ -132,9 +132,9 @@ int Deye::find(int address) const{
 QVector<DeyeSensor> Deye::createSensorList() const {
     return {
         // Temperature Sensors (scaling /10)
-        {"AC Temperature", "°C", "temperature", "ac_temp", "deye_ac_temp_001", 0.1, 541, SensorDataType::SHORT, 0},
-        {"Battery Temperature", "°C", "temperature", "battery_temp", "deye_battery_temp_002", 0.1, 586, SensorDataType::SHORT, 0},
-        {"DC Temperature", "°C", "temperature", "dc_temp", "deye_dc_temp_003", 0.1, 540, SensorDataType::SHORT, 0},
+        {"AC Temperature", "°C", "temperature", "ac_temp", "deye_ac_temp_001", 0.01, 541, SensorDataType::SHORT, 0},
+        {"Battery Temperature", "°C", "temperature", "battery_temp", "deye_battery_temp_002", 0.01, 586, SensorDataType::SHORT, 0},
+        {"DC Temperature", "°C", "temperature", "dc_temp", "deye_dc_temp_003", 0.01, 540, SensorDataType::SHORT, 0},
 
         // Battery Sensors
         {"Battery SOC", "%", "battery", "battery_soc", "deye_battery_capacity_004", 1.0, 588, SensorDataType::SHORT, 0},
