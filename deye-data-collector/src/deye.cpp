@@ -115,7 +115,7 @@ void Deye::read(int startAddress, int numRegisters, int serverAddress){
         if (!reply->isFinished()){
             m_ops.push(startAddress);
             QObject::connect(reply, &QModbusReply::finished, [this, reply, startAddress](){
-                qDebug() << "Reply finished";
+                qDebug() << "Reply finished for: " << startAddress;
                 this->onReadReady(reply, startAddress);
             });
         } else {

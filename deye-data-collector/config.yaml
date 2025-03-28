@@ -43,10 +43,7 @@ privileged:
 map:
   - config
 devices:
-  - "/dev/ttyUSB0"
-  - "/dev/ttyUSB1"
-  - "/dev/ttyUSB2"
-  - "/dev/ttyUSB3"
+  - "/dev/ttyUSB*"
 ingress: true
 image: "ghcr.io/pr4u4t/deye-data-collector"
 data_dir: /data/${INSTANCE}
