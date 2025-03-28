@@ -260,11 +260,15 @@ void Deye::updateSensor(DeyeSensor &sensor, const QModbusDataUnit& unit) {
             1,  // QoS 1
             true
         );
+    } else {
+        qDebug() << "mqtt client not found"; 
     }
 
     if(m_model){
         qDebug() << "model found updating sensor value";
         (*m_model)[sensor.topicSuffix] = sensor.data;
+    } else {
+        qDebug() << "model not found";
     }
 }
 
