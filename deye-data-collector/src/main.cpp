@@ -221,7 +221,7 @@ int main(int argc, char**argv){
 
         QObject::connect(deye, &Deye::reportReady, [deye](){
             if(deye->model() != nullptr){
-                qInfo() << "report:" << QString(QJsonDocument(*(deye->model())).toJson());
+                qInfo().noquote() << "report:" << QString(QJsonDocument(*(deye->model())).toJson());
             } else {
                 qDebug() << "Model is nullptr";
             }
