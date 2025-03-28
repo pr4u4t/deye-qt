@@ -83,8 +83,12 @@ void Deye::onReadReady(QModbusReply* reply){
     }
 
     reply->deleteLater();
+    
     if(m_ops.size() == 0){
+        qDebug() << "report ready emitting signal";
         emit reportReady();
+    }else{
+        qDebug() << "ops queue: " << m_ops.size();
     }
 }
 
