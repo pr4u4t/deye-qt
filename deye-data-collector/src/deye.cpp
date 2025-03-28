@@ -67,14 +67,14 @@ void Deye::onReadReady(QModbusReply* reply, int startAddress){
             qDebug() << "removing startAddress:" << startAddress << "from queue";
             m_ops.removeAt(d);
         } else {
-            qDebug() << "address:" << addr <<" not found on stack";
+            qDebug() << "address:" << startAddress <<" not found on stack";
         }
             
         if(k != -1){
-            qDebug() << "address: " << addr << "found";
+            qDebug() << "address: " << startAddress << "found";
             updateSensor(m_dict[k], unit);
         } else {
-            qDebug() << "address: " << addr << "not found";
+            qDebug() << "address: " << startAddress << "not found";
         }
     } else {
         qDebug() << "Read error for address: " << startAddress;
