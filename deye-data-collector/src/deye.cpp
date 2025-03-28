@@ -266,7 +266,7 @@ void Deye::readReport(){
             case SensorDataType::SSHORT:
                 read(sensor.address, 1);
                 break;
-            case SensorDataType::DWORD
+            case SensorDataType::DWORD:
                 read(sensor.address, 2);
                 break;
         }
