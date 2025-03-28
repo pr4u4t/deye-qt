@@ -215,11 +215,7 @@ float Deye::sensorValue(const /*signed*/ qint16 low, const qint16 high, float sc
 }
 
 void Deye::updateSensor(DeyeSensor &sensor, const QModbusDataUnit& unit) {
-    if (!m_client || m_client->state() != QMqttClient::Connected) {
-        qWarning() << "MQTT client not connected!";
-        return;
-    }
-    
+
     switch(sensor.type){
         case SensorDataType::SSHORT:
         case SensorDataType::SHORT:
@@ -238,6 +234,11 @@ void Deye::updateSensor(DeyeSensor &sensor, const QModbusDataUnit& unit) {
     }
 
     if(m_client){
+        //if (!m_client || m_client->state() != QMqttClient::Connected) {
+        //    qWarning() << "MQTT client not connected!";
+        //    return;
+        //}
+
         qDebug() << "mqtt client found updating sensor value";
         const QString topic = "deye/sensor/" + sensor.topicSuffix + "/state";
         qDebug() << "publishing" << topic << " value: " <<  QByteArray::number(sensor.data, 'f', 2);

@@ -218,8 +218,16 @@ int main(int argc, char**argv){
     if(parser.isSet(loopOption) == false){
         qDebug() << "Performing single read";
         deye->readReport();
-        QObject::connect(deye, &Deye::reportReady, QCoreApplication::instance(), &QCoreApplication::quit);
-        //QTimer::singleShot(5000, &QCoreApplication::quit);
+
+        QObject::connect(deye, &Deye::reportReady, [deye](){
+            if(deye->model() != nullptr){
+                qInfo() << "report:" << QJsonDocument(*(deye->model())).toJson();
+            } else {
+                qDebug() << "Model is nullptr";
+            }
+            QCoreApplication::quit();
+        });
+        
         return app.exec();
     }
 

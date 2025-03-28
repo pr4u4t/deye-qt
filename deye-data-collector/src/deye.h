@@ -130,6 +130,18 @@ public:
         m_client = client;
     }
 
+    inline void setModel(QJsonObject* object){
+        m_model = object;
+    }
+
+    inline const QMqttClient* mqttClient() const {
+        return m_client;
+    }
+
+    inline const QJsonObject* model() const {
+        return m_model;
+    }
+
 signals:
     void reportReady();
 
