@@ -76,7 +76,7 @@ void Deye::onReadReady(QModbusReply* reply){
         }
     } else {
         qDebug() << "Read error";
-        m_ops.pop();
+        m_ops.pop_back();
 
         if (reply->error() == QModbusDevice::ProtocolError) {
             qDebug() << QString("Read response error: %1 (Modbus exception: 0x%2)").
