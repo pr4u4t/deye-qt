@@ -1,5 +1,5 @@
 name: "Deye Data Collector"
-version: "1.4.0"
+version: "1.4.1"
 slug: "voltron_deye"
 description: "Collects data from Deye inverters via serial Modbus and exposes it via REST API."
 url: "https://github.com/pr4u4t/deye-qt"
@@ -42,5 +42,4 @@ devices:
   - "/dev:/dev:rwm"
 ingress: true
 image: "ghcr.io/pr4u4t/deye-qt"
-
 data_dir: /data/${INSTANCE}
