@@ -37,7 +37,7 @@ jobs:
         id: version
         run: |
           # Read version and sanitize it
-          VERSION=$(cat src/HAVERSION | tr -d '\n' | sed 's/^v//i')
+          VERSION=$(cat deye-data-collector/HAVERSION | tr -d '\n' | sed 's/^v//i')
           echo "Version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
