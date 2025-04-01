@@ -39,6 +39,6 @@ SOURCES += deye.cpp \
            utils.cpp
 
 # Add MQTT source file only if enabled
-contains(CONFIG, mqtt_support) {
-    SOURCES += mqttclient.cpp
-}
+#contains(CONFIG, mqtt_support) {
+#    SOURCES += mqttclient.cpp
+#}
