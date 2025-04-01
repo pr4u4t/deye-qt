@@ -42,6 +42,6 @@ map:
 devices:
   - "/dev:/dev:rwm"
 ingress: true
-image: "ghcr.io/pr4u4t/deye-qt:{{ arch }}"
+image: "ghcr.io/pr4u4t/deye-qt:latest"
 
 data_dir: /data/${INSTANCE}
