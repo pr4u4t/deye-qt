@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "Settings.h"
+#include "settings.h"
 
 enum class SensorDataType {
     SHORT = 0,
