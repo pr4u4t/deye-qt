@@ -35,7 +35,6 @@ public:
     float m_scalingFactor;
     int m_address;
     SensorDataType m_type;
-    float m_data;
 
     QString name() const { return m_name; }
     QString unit() const { return m_unit; }
@@ -47,7 +46,6 @@ public:
     float scalingFactor() const { return m_scalingFactor; }
     int address() const { return m_address; }
     SensorDataType type() const { return m_type; }
-    float data() const { return m_data; }
 
     QString typeString(SensorDataType type) const {
         switch (type) {
@@ -111,7 +109,8 @@ class Inverter : public QObject {
 public:
     Inverter(const Settings& settings, const QString& manufacturer, const QString& model)
         : m_manufacturer(manufacturer)
-        , m_model(model) {
+        , m_model(model)
+        , m_settings(settings){
     }
     
     virtual ~Inverter() = default;
@@ -134,6 +133,14 @@ public:
         return m_report;
     }
 
+    const QVector<Sensor>& sensors() const {
+        return m_dict;
+    }
+
+	Settings settings() const {
+		return m_settings;
+	}
+
 signals:
     void reportReady(const QJsonObject& report);
 
@@ -143,12 +150,18 @@ protected:
         return m_report;
     }
 
+    void setSensors(const QVector<Sensor>& sensors) {
+        m_dict = sensors;
+    }
+
 private:
     QString m_manufacturer;
     QString m_model;
     QJsonObject m_report;
+    QVector<Sensor> m_dict;
+	Settings m_settings;
 };
 
-Q_DECLARE_INTERFACE(Inverter, "pl.ntsystems.Inverter/1.0")
+//Q_DECLARE_INTERFACE(Inverter, "pl.ntsystems.Inverter/1.0")
 
 #endif // INVERTER_H

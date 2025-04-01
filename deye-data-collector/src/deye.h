@@ -21,15 +21,13 @@ class Deye  :  public Inverter {
 public:
     Deye(const Settings& settings, QObject* parent = nullptr);
 
-    ~Deye();
+    virtual ~Deye();
 
-    bool connectDevice();
+    bool connectDevice() override;
 
-    void disconnectDevice();
+    void disconnectDevice() override;
 
-    void readReport();
-
-    const QVector<Sensor>& sensors() const;
+    void readReport() override;
 
 protected slots:
 
@@ -42,7 +40,7 @@ protected:
 
     int find(int address) const; 
 
-    void updateSensor(Sensor &sensor, const QModbusDataUnit& unit);
+    void updateSensor(const Sensor &sensor, const QModbusDataUnit& unit);
 
 private:
     float sensorValue(const /*signed*/ qint16 data, float scale) const; //<<<--- signed short
@@ -52,7 +50,6 @@ private:
     QVector<Sensor> createSensorList() const;
 
     QModbusRtuSerialClient* m_modbusDevice = nullptr;
-    QVector<Sensor> m_dict;
     QStack<int> m_ops;
 };
 

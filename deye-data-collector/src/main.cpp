@@ -8,6 +8,9 @@
 
 #include "main.h"
 #include "utils.h"
+#include "output.h"
+#include "httpserver.h"
+#include "mqttclient.h"
 
 bool Config_load(const QString &path, QJsonObject &config) {
     qDebug() << "bool Config_load(const QString &path, QJsonObject &config)";
@@ -50,52 +53,6 @@ void SerialPort_dump(){
                     ? QByteArray::number(portInfo.productIdentifier(), 16)
                     : QByteArray());
     }
-}
-
-void Mqtt_publishAutoDiscovery(QMqttClient* mqttClient, const QVector<Sensor>& sensors) {
-    
-    for (const auto &sensor : sensors) {
-        QJsonObject payload {
-            {"name", "Deye " + sensor.name()},
-            {"state_topic", "deye/sensor/" + sensor.topicSuffix() + "/state"},
-            {"unit_of_measurement", sensor.unit()},
-            {"device_class", sensor.deviceClass()},
-            {"unique_id", sensor.uniqueId()},
-            {"availability_topic", "deye/status"}
-        };
-
-        mqttClient->publish(
-            QMqttTopicName("homeassistant/sensor/" + sensor.uniqueId() + "/config"),
-            QJsonDocument(payload).toJson(),
-            1,  // QoS 1
-            true // Retain
-        );
-    }
-    
-    // Publish online status
-    mqttClient->publish(QMqttTopicName("deye/status"), "online", 1, true);
-}
-
-QMqttClient* Mqtt_clientSetup(const QString& id, const QVector<Sensor>& sensors) {
-    auto client = new QMqttClient();
-    client->setHostname("core-mosquitto");  // HA Mosquitto broker
-    client->setUsername("homeassistant");
-    client->setPassword("YieVi1aeceoruavoo6io6uChaeD2looweil5aishooshoh7dan4ahreeYa1eal4o");
-    client->setPort(1883);
-    client->setClientId("deye-inverter-addon-"+id);
-    client->setProtocolVersion(QMqttClient::MQTT_3_1_1);
-    
-    QObject::connect(client, &QMqttClient::connected, [client, sensors]() {
-        qDebug() << "MQTT Connected!";
-        Mqtt_publishAutoDiscovery(client, sensors);
-    });
-    
-    QObject::connect(client, &QMqttClient::errorChanged, [](QMqttClient::ClientError error) {
-        qCritical() << "MQTT Error:" << error;
-    });
-    
-    client->connectToHost();
-    return client;
 }
 
 void debug_arguments(int& argc, char** argv) {
@@ -190,9 +147,12 @@ void set_logger_verbosity(const Settings& settings) {
     }
 }
 
-void single_run(Inverter* inv, const Settings& settings) {
+void single_run(Inverter* inv, const Settings& settings, QTimer& timer, QVector<Output*>& outputs) {
     qDebug() << "void single_run(Inverter* inv, const Settings& settings)";
     Q_UNUSED(settings)
+    Q_UNUSED(timer)
+    Q_UNUSED(outputs)
+
     qDebug() << "Performing single read";
 
     QObject::connect(inv, &Inverter::reportReady, [inv](const QJsonObject& report) {
@@ -204,30 +164,45 @@ void single_run(Inverter* inv, const Settings& settings) {
     inv->readReport();
 }
 
-void loop_run(Inverter* inv, const Settings& settings) {
+void loop_run(Inverter* inv, const Settings& settings, QTimer& timer, QVector<Output*>& outputs) {
     qDebug() << "void loop_run(Inverter* inv, const Settings& settings)";
-    /*
-qDebug() << "Starting loop mode";
-timer.setInterval(config.interval());
 
-QObject::connect(&timer, &QTimer::timeout, [deye](){
-    qDebug() << "Report:" << QDateTime::currentDateTime().toString();
-    deye->readReport();
-});
+    if (settings.httpserver()) {
+        auto server = new HttpServer(settings);
+        if (server->init() == false) {
+			qCritical() << "Failed to start http server";
+			return;
+        }
+		outputs.push_back(server);
+        QObject::connect(inv, &Inverter::reportReady, server, &HttpServer::update);
+    }
 
-timer.start();
+    if (settings.mqttclient()) {
+		auto mqtt = new MqttClient(settings);
+        if (mqtt->init() == false) {
+			qCritical() << "Failed to start mqtt client";
+            return;
+        }
+    
+        outputs.push_back(mqtt);
+        QObject::connect(inv, &Inverter::reportReady, mqtt, &MqttClient::update);
+    }
+ 
+    timer.setInterval(settings.interval());
 
-if(config.httpserver()){
-    qDebug() << "Starting http server";
-    //HttpServer_start(config, &server, &model);
-}
-*/
+    QObject::connect(&timer, &QTimer::timeout, [inv](){
+        qDebug() << "Report:" << QDateTime::currentDateTime().toString();
+        inv->readReport();
+    });
+
+    timer.start();
 }
 
 int main(int argc, char** argv){
     Settings config;
     QCommandLineParser parser;
     QTimer timer;
+    QVector<Output*> outputs;
 
     qDebug() << "***************************************************************";
     qDebug() << "*                  STARTING INVERTER                          *";
@@ -265,9 +240,9 @@ int main(int argc, char** argv){
     }
 
     if(config.loop() == false) {
-        single_run(inv, config);
+        single_run(inv, config, timer, outputs);
     } else {
-        loop_run(inv, config);
+        loop_run(inv, config, timer, outputs);
     }
 
     return app.exec();

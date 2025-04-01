@@ -8,8 +8,7 @@
 class Output {
 public:
     Output(const Settings& settings)
-        : m_settings(settings) 
-    {}
+        : m_settings(settings) {}
 
     virtual ~Output() = default;
 

@@ -15,5 +15,6 @@
   "mqtt_port": 1883,
   "mqtt_user": "homeassistant",
   "mqtt_password": "YieVi1aeceoruavoo6io6uChaeD2looweil5aishooshoh7dan4ahreeYa1eal4o",
-  "driver": "dummy"
+  "driver": "dummy",
+  "loop": true
 }

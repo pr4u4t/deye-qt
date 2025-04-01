@@ -24,15 +24,13 @@ class Dummy : public Inverter {
 public:
     Dummy(const Settings& settings, QObject* parent = nullptr);
 
-    ~Dummy();
+    virtual ~Dummy();
 
-    bool connectDevice();
+    bool connectDevice() override;
 
-    void disconnectDevice();
+    void disconnectDevice() override;
 
-    void readReport();
-
-    const QVector<Sensor>& sensors() const;
+    void readReport() override;
 
 private:
     float sensorValue(const /*signed*/ qint16 data, float scale) const; //<<<--- signed short
@@ -47,9 +45,23 @@ private:
         return dist(gen);
     }
 
+    int getNumberFromEnd(const QString& str) {
+        // Create a regular expression to match one or more digits at the end of the string
+        QRegularExpression regex("(\\d+)$");
+
+        // Search for the pattern in the input string
+        QRegularExpressionMatch match = regex.match(str);
+
+        // If a match is found, convert it to an integer and return
+        if (match.hasMatch()) {
+            return match.captured(1).toInt();
+        }
+
+        // Return -1 or another value to indicate no number was found
+        return -1;
+    }
 
     QVector<Sensor> createSensorList() const;
-    QVector<Sensor> m_dict;
 };
 
 #endif

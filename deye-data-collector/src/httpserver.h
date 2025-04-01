@@ -8,6 +8,7 @@
 
 #include "output.h"
 #include "settings.h"
+#include "inverter.h"
 
 class HttpServer : public QObject
                  , public Output {
@@ -23,9 +24,30 @@ public:
 
     ~HttpServer() override = default;
 
-    bool init();
+    bool init() override;
 
-    void deinit();
+    void deinit() override;
+
+public slots:
+    void update(const QJsonObject& report) override {
+		QObject* sender = QObject::sender();
+        if (sender == nullptr) {
+            qCritical() << "Sender == nullptr";
+            return;
+        }
+
+        Inverter* inv = qobject_cast<Inverter*>(sender);
+		if (inv == nullptr) {
+			qCritical() << "Invalid sender";
+			return;
+		}
+
+		const auto& sensors = inv->sensors();
+
+        for (const auto& sensor : sensors) {
+            m_data[QString("deye_%1_sensor_%2_state").arg(settings().instance()).arg(sensor.topicSuffix()).replace(" ", "_").toLower()] = qRound(report[sensor.uniqueId()].toDouble() * 100.0) / 100.0; ;
+        }        
+    }
 
 private:
     QHttpServer* m_server = nullptr;
