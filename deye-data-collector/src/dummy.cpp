@@ -2,6 +2,7 @@
 
 Dummy::Dummy(const Settings& settings, QObject* parent)
     : Inverter(settings, "Dummy", "Random") {
+    Q_UNUSED(parent)
     setSensors(createSensorList());
 }
 
