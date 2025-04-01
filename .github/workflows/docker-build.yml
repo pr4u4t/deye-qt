@@ -27,7 +27,7 @@ jobs:
     - name: Set up QEMU for cross-platform builds
       uses: docker/setup-qemu-action@v2
       with:
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64,linux/arm64,linux/aarch64
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
