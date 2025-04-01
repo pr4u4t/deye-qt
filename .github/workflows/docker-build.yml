@@ -20,7 +20,7 @@ jobs:
       - name: Set up QEMU for cross-platform builds
         uses: docker/setup-qemu-action@v2
         with:
-          platforms: linux/amd64,linux/arm64, linux/aarch64
+          platforms: linux/amd64,linux/arm64
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -52,13 +52,16 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
-          platforms: linux/amd64,linux/arm64, linux/aarch64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+            context: .
+            platforms: linux/amd64,linux/arm64
+            push: true
+            tags: |
+                ghcr.io/pr4u4t/deye-qt:latest
+                ghcr.io/pr4u4t/deye-qt:amd64
+                ghcr.io/pr4u4t/deye-qt:arm64
+                ghcr.io/pr4u4t/deye-qt:aarch64
+            cache-from: type=local,src=/tmp/.buildx-cache
+            cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
       - name: Move cache
         run: |
