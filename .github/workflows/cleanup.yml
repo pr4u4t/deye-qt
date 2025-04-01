@@ -1,0 +1,46 @@
+name: Cleanup Container Images
+on:
+  # Run after new images are built
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
+    branches:
+      - main
+  # Also run on a schedule (weekly)
+  schedule:
+    - cron: '0 0 * * 0'  # Run at midnight every Sunday
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  cleanup-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old container images
+        uses: actions/delete-package-versions@v4
+        with:
+          package-name: 'deye-qt'
+          package-type: 'container'
+          min-versions-to-keep: 5
+          # Only delete untagged versions that are not the latest for the given tag
+          delete-only-untagged-versions: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Optionally add a notification step
+      - name: Send notification
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const result = "${{ job.status }}";
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            await github.rest.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: context.issue.number || (await github.rest.repos.listCommits({owner, repo, per_page: 1})).data[0].sha,
+              body: `Image cleanup completed with status: ${result}`
+            });
