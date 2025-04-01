@@ -1,0 +1,19 @@
+{
+  "device": "/dev/ttyUSB0",
+  "parity": "none",
+  "instance": "Instance 1",
+  "baud": 9600,
+  "data_bits": 8,
+  "stop_bits": 1,
+  "response_time": 1000,
+  "number_of_retries": 3,
+  "listen": 8080,
+  "interval": 5000,
+  "http_server": true,
+  "mqtt_client": false,
+  "mqtt_host": "core-mosquitto",
+  "mqtt_port": 1883,
+  "mqtt_user": "homeassistant",
+  "mqtt_password": "YieVi1aeceoruavoo6io6uChaeD2looweil5aishooshoh7dan4ahreeYa1eal4o",
+  "driver": "dummy"
+}

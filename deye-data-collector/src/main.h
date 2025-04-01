@@ -7,6 +7,7 @@
 #include <QLoggingCategory>
 
 #include "deye.h"
+#include "dummy.h"
 #include "settings.h"
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef DEYE_H
-#define DEYE_H
+#ifndef DUMMY_H
+#define DUMMY_H
 
 #include <QCommandLineParser>
 #include <QModbusRtuSerialClient>
@@ -10,18 +10,21 @@
 #include <QVector>
 #include <QStack>
 
+#include <random>
+#include <limits>
+
 #include "utils.h"
 #include "settings.h"
 #include "inverter.h"
 
-class Deye  :  public Inverter {
-    
+class Dummy : public Inverter {
+
     Q_OBJECT
 
 public:
-    Deye(const Settings& settings, QObject* parent = nullptr);
+    Dummy(const Settings& settings, QObject* parent = nullptr);
 
-    ~Deye();
+    ~Dummy();
 
     bool connectDevice();
 
@@ -31,29 +34,22 @@ public:
 
     const QVector<Sensor>& sensors() const;
 
-protected slots:
-
-    void onReadReady(QModbusReply* reply, int startAddress);
-
-protected:
-    void read(int startAddress, int numRegisters, int serverAddress = 1);
-
-    QModbusDataUnit readRequest(int startAddress, int numRegisters);
-
-    int find(int address) const; 
-
-    void updateSensor(Sensor &sensor, const QModbusDataUnit& unit);
-
 private:
     float sensorValue(const /*signed*/ qint16 data, float scale) const; //<<<--- signed short
     float sensorValue(const /*unsigned*/ quint16 data, float scale) const; //<<<--- unsigned short
     float sensorValue(const /*signed*/ qint16 low, const qint16 high, float scale) const;
 
-    QVector<Sensor> createSensorList() const;
+    template<typename T>
+    T generateRandom(T min = std::numeric_limits<T>::min(),T max = std::numeric_limits<T>::max()) {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        std::uniform_int_distribution<T> dist(min, max);
+        return dist(gen);
+    }
 
-    QModbusRtuSerialClient* m_modbusDevice = nullptr;
+
+    QVector<Sensor> createSensorList() const;
     QVector<Sensor> m_dict;
-    QStack<int> m_ops;
 };
 
 #endif

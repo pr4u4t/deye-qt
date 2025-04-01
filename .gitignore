@@ -40,3 +40,5 @@ moc_*
 **/Makefile
 **/Makefile.*
 PAT
+**/.vs
+**/x64
