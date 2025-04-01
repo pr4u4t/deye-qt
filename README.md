@@ -1,3 +1,5 @@
+[![Docker Build Status](https://github.com/pr4u4t/deye-qt/actions/workflows/docker-build.yml/badge.svg)](https://github.com/pr4u4t/deye-qt/actions)
+
 # Deye Integration for Home Assistant
 
 A Qt-based integration for connecting Deye inverter systems with Home Assistant, supporting serial communication, Modbus protocol, and REST API functionality.
