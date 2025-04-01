@@ -6,7 +6,6 @@ on:
     paths:
       - Dockerfile
       - '**/*.pro'
-      - '**/*.yaml'
       - '.github/workflows/docker-build.yml'
       - '**/*.cpp'
       - '**/*.h'
