@@ -52,7 +52,6 @@ jobs:
         docker buildx build \
           --platform linux/${{ matrix.architecture }} \
           --tag ghcr.io/pr4u4t/deye-qt:${{ matrix.architecture }} \
-          --tag ghcr.io/pr4u4t/deye-qt:latest \
           --push .
 
     - name: Verify pushed images
