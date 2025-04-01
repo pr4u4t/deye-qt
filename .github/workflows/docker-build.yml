@@ -38,5 +38,4 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/pr4u4t/deye-qt:latest
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/armhf,linux/i386

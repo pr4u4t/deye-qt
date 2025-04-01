@@ -13,6 +13,7 @@ arch:
   - aarch64
   - amd64
   - i386
+  - arm64
 options:
   instance_name: "Deye Instance 1"
   device: "/dev/ttyUSB0"

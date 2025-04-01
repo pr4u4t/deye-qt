@@ -6,7 +6,14 @@ TEMPLATE = app
 TARGET = deye
 INCLUDEPATH += .
 
-QT += serialport serialbus httpserver mqtt
+QT += serialport serialbus httpserver
+
+# Check if MQTT should be included
+CONFIG += mqtt_support
+contains(CONFIG, mqtt_support) {
+    QT += mqtt
+    HEADERS += mqttclient.h
+}
 
 # You can make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -21,7 +28,6 @@ HEADERS += deye.h \
            httpserver.h \
            inverter.h \
            main.h \
-           mqttclient.h \
            output.h \
            settings.h \
            utils.h
@@ -31,3 +37,8 @@ SOURCES += deye.cpp \
            httpserver.cpp \
            main.cpp \
            utils.cpp
+
+# Add MQTT source file only if enabled
+contains(CONFIG, mqtt_support) {
+    SOURCES += mqttclient.cpp
+}
