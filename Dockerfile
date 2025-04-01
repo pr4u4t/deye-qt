@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.source https://github.com/pr4u4t/deye-qt
 VOLUME [ "/data" ]
 
 WORKDIR /app
-COPY . /app/
+COPY deye-data-collector/ /app/
 
 RUN qmake6 CONFIG+=release && \
     make
