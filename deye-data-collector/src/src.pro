@@ -4,9 +4,10 @@
 
 TEMPLATE = app
 TARGET = deye
-INCLUDEPATH += . 
+INCLUDEPATH += .
 
 QT += serialport serialbus httpserver mqtt
+
 # You can make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # Please consult the documentation of the deprecated API in order to know
@@ -15,5 +16,18 @@ QT += serialport serialbus httpserver mqtt
 #DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x060000 # disables all APIs deprecated in Qt 6.0.0 and earlier
 
 # Input
-HEADERS += deye.h main.h utils.h
-SOURCES += deye.cpp main.cpp utils.cpp
+HEADERS += deye.h \
+           dummy.h \
+           httpserver.h \
+           inverter.h \
+           main.h \
+           mqttclient.h \
+           output.h \
+           settings.h \
+           utils.h
+
+SOURCES += deye.cpp \
+           dummy.cpp \
+           httpserver.cpp \
+           main.cpp \
+           utils.cpp
