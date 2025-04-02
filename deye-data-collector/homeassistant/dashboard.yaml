@@ -1,0 +1,82 @@
+title: Deye Monitor
+views:
+  - title: Deye
+    path: voltron
+    cards:
+      - type: entities
+        title: Battery Status
+        entities:
+          - sensor.deye_{{instance}}_battery_soc
+          - sensor.deye_{{instance}}_battery_voltage
+          - sensor.deye_{{instance}}_battery_power
+          - sensor.deye_{{instance}}_battery_current
+          - sensor.deye_{{instance}}_battery_temperature
+          - sensor.deye_{{instance}}_daily_battery_charge
+          - sensor.deye_{{instance}}_daily_battery_discharge
+          - sensor.deye_{{instance}}_total_battery_charge
+          - sensor.deye_{{instance}}_total_battery_discharge
+
+      - type: entities
+        title: Grid Status
+        entities:
+          - sensor.deye_{{instance}}_grid_voltage_l1
+          - sensor.deye_{{instance}}_grid_voltage_l2
+          - sensor.deye_{{instance}}_grid_voltage_l3
+          - sensor.deye_{{instance}}_current_l1
+          - sensor.deye_{{instance}}_current_l2
+          - sensor.deye_{{instance}}_current_l3
+          - sensor.deye_{{instance}}_total_grid_power
+          - sensor.deye_{{instance}}_gridsell_power
+          - sensor.deye_{{instance}}_daily_energy_bought
+          - sensor.deye_{{instance}}_daily_energy_sold
+          - sensor.deye_{{instance}}_total_energy_bought
+          - sensor.deye_{{instance}}_total_energy_sold
+
+      - type: entities
+        title: Solar Production
+        entities:
+          - sensor.deye_{{instance}}_pv1_voltage
+          - sensor.deye_{{instance}}_pv1_current
+          - sensor.deye_{{instance}}_pv1_power
+          - sensor.deye_{{instance}}_pv2_voltage
+          - sensor.deye_{{instance}}_pv2_current
+          - sensor.deye_{{instance}}_pv2_power
+          - sensor.deye_{{instance}}_daily_production
+          - sensor.deye_{{instance}}_total_production
+
+      - type: entities
+        title: Load Consumption
+        entities:
+          - sensor.deye_{{instance}}_load_voltage_l1
+          - sensor.deye_{{instance}}_load_voltage_l2
+          - sensor.deye_{{instance}}_load_voltage_l3
+          - sensor.deye_{{instance}}_load_l1_power
+          - sensor.deye_{{instance}}_load_l2_power
+          - sensor.deye_{{instance}}_load_l3_power
+          - sensor.deye_{{instance}}_total_load_power
+          - sensor.deye_{{instance}}_day_load_power
+          - sensor.deye_{{instance}}_daily_load_consumption
+          - sensor.deye_{{instance}}_total_load_consumption
+
+      - type: entities
+        title: Inverter Status
+        entities:
+          - sensor.deye_{{instance}}_inverter_l1_power
+          - sensor.deye_{{instance}}_inverter_l2_power
+          - sensor.deye_{{instance}}_inverter_l3_power
+          - sensor.deye_{{instance}}_ac_temperature
+          - sensor.deye_{{instance}}_dc_temperature
+          - sensor.deye_{{instance}}_total_active_in_power
+
+      - type: entities
+        title: CT Sensors
+        entities:
+          - sensor.deye_{{instance}}_external_ct_l1_power
+          - sensor.deye_{{instance}}_external_ct_l2_power
+          - sensor.deye_{{instance}}_external_ct_l3_power
+          - sensor.deye_{{instance}}_internal_ct_l1_power
+          - sensor.deye_{{instance}}_internal_ct_l2_power
+          - sensor.deye_{{instance}}_internal_ct_l3_power
+          - sensor.deye_{{instance}}_gen_port_power
+
+

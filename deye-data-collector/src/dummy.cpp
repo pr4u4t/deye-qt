@@ -112,9 +112,9 @@ void Dummy::readReport() {
         const auto inst = getNumberFromEnd(settings().instance());
 		const auto sens = getNumberFromEnd(sensor.uniqueId());
 
-        data()[sensor.uniqueId()] = QString("%1.%2").arg(inst).arg(sens).toDouble();
+        //data()[sensor.uniqueId()] = QString("%1.%2").arg(inst).arg(sens).toDouble();
 
-        /*switch (sensor.type()) {
+        switch (sensor.type()) {
         case SensorDataType::SHORT:
             data()[sensor.uniqueId()] = sensorValue(generateRandom<short>(), sensor.scalingFactor());
             break;
@@ -128,7 +128,6 @@ void Dummy::readReport() {
             data()[sensor.uniqueId()] = sensorValue(generateRandom<short>(), generateRandom<short>(), sensor.scalingFactor());
             break;
         }
-        */
     }
 
     emit reportReady(data());

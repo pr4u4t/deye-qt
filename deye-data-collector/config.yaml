@@ -1,5 +1,5 @@
 name: "Deye Data Collector"
-version: "1.4.5"
+version: "1.4.6"
 slug: "voltron_deye"
 description: "Collects data from Deye inverters via serial Modbus and exposes it via REST API."
 url: "https://github.com/pr4u4t/deye-qt"
