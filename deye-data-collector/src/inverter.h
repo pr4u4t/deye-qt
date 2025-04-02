@@ -107,7 +107,7 @@ class Inverter : public QObject {
     Q_OBJECT
 
 public:
-    Inverter(const Settings& settings, const QString& manufacturer, const QString& model)
+    Inverter(const InverterSettings& settings, const QString& manufacturer, const QString& model)
         : m_manufacturer(manufacturer)
         , m_model(model)
         , m_settings(settings){
@@ -137,7 +137,7 @@ public:
         return m_dict;
     }
 
-	Settings settings() const {
+	InverterSettings settings() const {
 		return m_settings;
 	}
 
@@ -159,7 +159,7 @@ private:
     QString m_model;
     QJsonObject m_report;
     QVector<Sensor> m_dict;
-	Settings m_settings;
+	InverterSettings m_settings;
 };
 
 //Q_DECLARE_INTERFACE(Inverter, "pl.ntsystems.Inverter/1.0")

@@ -19,7 +19,7 @@ class Deye  :  public Inverter {
     Q_OBJECT
 
 public:
-    Deye(const Settings& settings, QObject* parent = nullptr);
+    Deye(const InverterSettings& settings, QObject* parent = nullptr);
 
     virtual ~Deye();
 

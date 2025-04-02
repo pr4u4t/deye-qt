@@ -1,6 +1,6 @@
 #include "dummy.h"
 
-Dummy::Dummy(const Settings& settings, QObject* parent)
+Dummy::Dummy(const InverterSettings& settings, QObject* parent)
     : Inverter(settings, "Dummy", "Random") {
     Q_UNUSED(parent)
     setSensors(createSensorList());

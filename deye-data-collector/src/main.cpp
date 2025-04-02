@@ -65,8 +65,8 @@ void debug_arguments(int& argc, char** argv) {
     qDebug() << ">>>>>>>>>>>";
 }
 
-Inverter* choose_driver(const Settings& settings) {
-    qDebug() << "Inverter* choose_driver(const QString& driver, const Settings& settings)";
+Inverter* choose_driver(const InverterSettings& settings) {
+    qDebug() << "Inverter* choose_driver(const Settings& settings)";
     if (settings.driver().toLower() == "deye") {
         return new Deye(settings);
     }
@@ -85,15 +85,9 @@ void setup_parser(QCommandLineParser& parser) {
     parser.addVersionOption();
 
     parser.addOption({ {"e", "verbosity"}, "Set verbosity level (0-3).", "verbosity" });
-    parser.addOption({ {"d", "device"}, "Open serial port <device>.", "device" });
-    parser.addOption({ {"p", "parity"}, "Set parity (none, even, odd, mark, space).", "parity" });
-    parser.addOption({ {"b", "baud"}, "Set baud rate (e.g., 9600, 115200).", "baud" });
-    parser.addOption({ {"l", "data_bits"}, "Set number of data bits (5, 6, 7, or 8).", "dataBits" });
-    parser.addOption({ {"s", "stop_bits"}, "Set number of stop bits (1 or 2).", "stopBits" });
-    parser.addOption({ {"t", "response_time"}, "Set response timeout in milliseconds.", "responseTime" });
-    parser.addOption({ {"r", "number_of_retries"}, "Set number of retries for communication errors.", "numberOfRetries" });
-    parser.addOption({ {"i", "interval"}, "Loop <interval>.", "interval" });
     parser.addOption({ {"c", "config"}, "Configuration file path", "config" });
+
+    /*
     parser.addOption({ {"n", "listen"}, "Listen port number", "listen" });
     parser.addOption({ {"a", "instance"}, "Instance name", "instance" });
     parser.addOption({ {"m", "http_server"}, "Whether to start http server or not <true|false>", "httpserver" });
@@ -104,6 +98,15 @@ void setup_parser(QCommandLineParser& parser) {
     parser.addOption({ {"z", "mqtt_host"}, "MQTT broker hostname or IP address", "mqtt_host" });
     parser.addOption({ {"u", "mqtt_user"}, "Username for MQTT authentication", "mqtt_user" });
     parser.addOption({ {"w", "mqtt_password"}, "Password for MQTT authentication", "mqtt_password" });
+    parser.addOption({ {"d", "device"}, "Open serial port <device>.", "device" });
+    parser.addOption({ {"p", "parity"}, "Set parity (none, even, odd, mark, space).", "parity" });
+    parser.addOption({ {"b", "baud"}, "Set baud rate (e.g., 9600, 115200).", "baud" });
+    parser.addOption({ {"l", "data_bits"}, "Set number of data bits (5, 6, 7, or 8).", "dataBits" });
+    parser.addOption({ {"s", "stop_bits"}, "Set number of stop bits (1 or 2).", "stopBits" });
+    parser.addOption({ {"t", "response_time"}, "Set response timeout in milliseconds.", "responseTime" });
+    parser.addOption({ {"r", "number_of_retries"}, "Set number of retries for communication errors.", "numberOfRetries" });
+    parser.addOption({ {"i", "interval"}, "Loop <interval>.", "interval" });
+    */
 }
 
 void load_settings(Settings& settings, const QCommandLineParser& parser) {
@@ -125,8 +128,8 @@ void load_settings(Settings& settings, const QCommandLineParser& parser) {
         qDebug() << "Configuration file path empty";
     }
 
-    settings.fillFromCmd(parser);
-    qDebug() << "Configuration after cmd: " << settings;
+    //settings.fillFromCmd(parser);
+    //qDebug() << "Configuration after cmd: " << settings;
 }
 
 void set_logger_verbosity(const Settings& settings) {
@@ -164,7 +167,7 @@ void single_run(Inverter* inv, const Settings& settings, QTimer& timer, QVector<
     inv->readReport();
 }
 
-void loop_run(Inverter* inv, const Settings& settings, QTimer& timer, QVector<Output*>& outputs) {
+void loop_run(QVector<Inverter*>& invs, const Settings& settings, QTimer& timer, QVector<Output*>& outputs) {
     qDebug() << "void loop_run(Inverter* inv, const Settings& settings)";
 
     if (settings.httpserver()) {
@@ -174,7 +177,7 @@ void loop_run(Inverter* inv, const Settings& settings, QTimer& timer, QVector<Ou
 			return;
         }
 		outputs.push_back(server);
-        QObject::connect(inv, &Inverter::reportReady, server, &HttpServer::update);
+        //QObject::connect(inv, &Inverter::reportReady, server, &HttpServer::update);
     }
 
     if (settings.mqttclient()) {
@@ -185,16 +188,17 @@ void loop_run(Inverter* inv, const Settings& settings, QTimer& timer, QVector<Ou
         }
     
         outputs.push_back(mqtt);
-        QObject::connect(inv, &Inverter::reportReady, mqtt, &MqttClient::update);
+        //QObject::connect(inv, &Inverter::reportReady, mqtt, &MqttClient::update);
     }
  
     timer.setInterval(settings.interval());
 
-    QObject::connect(&timer, &QTimer::timeout, [inv](){
+    /*
+    QObject::connect(&timer, &QTimer::timeout, [inv]() {
         qDebug() << "Report:" << QDateTime::currentDateTime().toString();
         inv->readReport();
     });
-
+    */
     timer.start();
 }
 
@@ -203,6 +207,7 @@ int main(int argc, char** argv){
     QCommandLineParser parser;
     QTimer timer;
     QVector<Output*> outputs;
+	QVector<Inverter*> invs;
 
     qDebug() << "***************************************************************";
     qDebug() << "*                  STARTING INVERTER                          *";
@@ -226,8 +231,9 @@ int main(int argc, char** argv){
 
     set_logger_verbosity(config);
     
-    auto inv = choose_driver(config);
+    //auto inv = choose_driver(config);
 
+    /*
     if(inv == nullptr){
         qCritical() << "Failed to create Inverter instance... quitting";
         return 1;
@@ -243,6 +249,7 @@ int main(int argc, char** argv){
     } else {
         loop_run(inv, config, timer, outputs);
     }
+    */
 
     return app.exec();
 }

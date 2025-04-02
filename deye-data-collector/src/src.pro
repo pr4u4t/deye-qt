@@ -13,6 +13,7 @@ CONFIG += mqtt_support
 contains(CONFIG, mqtt_support) {
     QT += mqtt
     HEADERS += mqttclient.h
+    SOURCES += mqttclient.cpp
 }
 
 # You can make your code fail to compile if you use deprecated APIs.
@@ -37,8 +38,3 @@ SOURCES += deye.cpp \
            httpserver.cpp \
            main.cpp \
            utils.cpp
-
-# Add MQTT source file only if enabled
-#contains(CONFIG, mqtt_support) {
-#    SOURCES += mqttclient.cpp
-#}

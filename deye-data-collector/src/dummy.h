@@ -22,7 +22,7 @@ class Dummy : public Inverter {
     Q_OBJECT
 
 public:
-    Dummy(const Settings& settings, QObject* parent = nullptr);
+    Dummy(const InverterSettings& settings, QObject* parent = nullptr);
 
     virtual ~Dummy();
 

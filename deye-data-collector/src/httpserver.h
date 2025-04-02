@@ -43,9 +43,9 @@ public slots:
 		}
 
 		const auto& sensors = inv->sensors();
-
+		const auto instance = inv->settings().instance();
         for (const auto& sensor : sensors) {
-            m_data[QString("deye_%1_sensor_%2_state").arg(settings().instance()).arg(sensor.topicSuffix()).replace(" ", "_").toLower()] = qRound(report[sensor.uniqueId()].toDouble() * 100.0) / 100.0; ;
+            m_data[QString("deye_%1_sensor_%2_state").arg(instance).arg(sensor.topicSuffix()).replace(" ", "_").toLower()] = qRound(report[sensor.uniqueId()].toDouble() * 100.0) / 100.0; ;
         }        
     }
 

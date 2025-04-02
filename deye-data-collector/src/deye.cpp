@@ -1,6 +1,6 @@
 #include "deye.h"
 
-Deye::Deye(const Settings& settings, QObject* parent)
+Deye::Deye(const InverterSettings& settings, QObject* parent)
     : Inverter(settings, "Deye", "LP")
     , m_modbusDevice(new QModbusRtuSerialClient(parent)){
 	qDebug() << "Deye::Deye(const Settings& settings, QObject* parent)";
