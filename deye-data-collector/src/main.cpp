@@ -5,6 +5,8 @@
 #include <QJsonDocument>
 #include <QFile>
 #include <QMqttClient>
+#include <QDir>
+#include <QFileInfo>
 
 #include "main.h"
 #include "utils.h"
@@ -12,7 +14,7 @@
 #include "httpserver.h"
 #include "mqttclient.h"
 
-bool Config_load(const QString &path, QJsonObject &config) {
+bool config_load(const QString &path, QJsonObject &config) {
     qDebug() << "bool Config_load(const QString &path, QJsonObject &config)";
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -34,7 +36,7 @@ bool Config_load(const QString &path, QJsonObject &config) {
     return true;
 }
 
-void SerialPort_dump(){
+void serial_port_dump(){
     qDebug() << "void SerialPort_dump()";
     const auto serialPortInfos = QSerialPortInfo::availablePorts();
     for (const QSerialPortInfo &portInfo : serialPortInfos) {
@@ -83,13 +85,6 @@ void setup_parser(QCommandLineParser& parser) {
     parser.addVersionOption();
 
     parser.addOption({ {"e", "verbosity"}, "Set verbosity level (0-3).", "verbosity" });
-
-    QCommandLineOption loopOption("loop", "Read report in loop");
-    parser.addOption(loopOption);
-
-    QCommandLineOption portsOption("ports", "List serial ports");
-    parser.addOption(portsOption);
-
     parser.addOption({ {"d", "device"}, "Open serial port <device>.", "device" });
     parser.addOption({ {"p", "parity"}, "Set parity (none, even, odd, mark, space).", "parity" });
     parser.addOption({ {"b", "baud"}, "Set baud rate (e.g., 9600, 115200).", "baud" });
@@ -104,6 +99,8 @@ void setup_parser(QCommandLineParser& parser) {
     parser.addOption({ {"m", "http_server"}, "Whether to start http server or not <true|false>", "httpserver" });
     parser.addOption({ {"q", "mqtt_client"}, "Whether to use mqtt client<true|false>", "mqttclient" });
     parser.addOption({ {"g", "driver"}, "Driver to use <Deye|Dummy>", "driver" });
+    parser.addOption({ {"o", "loop"}, "Whether to execute reading in loop <true|false>", "loop" });
+    parser.addOption({ {"k", "ports"}, "Whether to list local modbus ports <true|false>", "ports" });
 }
 
 void load_settings(Settings& settings, const QCommandLineParser& parser) {
@@ -113,7 +110,7 @@ void load_settings(Settings& settings, const QCommandLineParser& parser) {
     if (conf.size() > 0) {
         qInfo() << "Reading configuration from file";
         QJsonObject cnf;
-        if (Config_load(conf, cnf) == true) {
+        if (config_load(conf, cnf) == true) {
             settings.fillFromJson(cnf);
             qDebug() << "Configuration from file: " << settings;
         }
@@ -219,8 +216,7 @@ int main(int argc, char** argv){
     parser.process(app);
 
     if (config.ports() == true) {
-        SerialPort_dump();
-        return 0;
+        serial_port_dump();
     }
 
     load_settings(config, parser);

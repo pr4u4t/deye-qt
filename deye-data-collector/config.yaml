@@ -1,5 +1,5 @@
 name: "Deye Data Collector"
-version: "1.4.1"
+version: "1.4.2"
 slug: "voltron_deye"
 description: "Collects data from Deye inverters via serial Modbus and exposes it via REST API."
 url: "https://github.com/pr4u4t/deye-qt"
@@ -21,6 +21,8 @@ options:
   http_port: 8080
   http_server: false
   interval: 5000
+  driver: "deye"
+  ports: false
 schema:
   instance_name: "str"
   device: "str"
@@ -33,6 +35,8 @@ schema:
   http_port: "int"
   http_server: "bool"
   interval: "int"
+  driver: "str"
+  ports: "bool"
 privileged:
   - SYS_RAWIO
   - SYS_ADMIN

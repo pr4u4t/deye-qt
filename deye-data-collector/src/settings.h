@@ -121,14 +121,6 @@ public:
             setInterval(source.value("interval").toInt());
         }
 
-        if(hasValue(source, "http_server") == true){
-            setHttpServer(toBool(source.value("http_server")));
-        }
-
-        if(hasValue(source, "mqtt_client") == true){
-            setMqttClient(toBool(source.value("mqtt_client")));
-        }
-
         if (hasValue(source, "driver") == true) {
             setDriver(convert(source.value("driver")));
         }
@@ -143,6 +135,14 @@ public:
 
         if (hasValue(source, "loop") == true) {
             setLoop(toBool(source.value("loop")));
+        }
+
+        if (hasValue(source, "http_server") == true) {
+            setHttpServer(toBool(source.value("http_server")));
+        }
+
+        if (hasValue(source, "mqtt_client") == true) {
+            setMqttClient(toBool(source.value("mqtt_client")));
         }
     }
 
