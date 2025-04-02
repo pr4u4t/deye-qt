@@ -112,8 +112,6 @@ void Dummy::readReport() {
         const auto inst = getNumberFromEnd(settings().instance());
 		const auto sens = getNumberFromEnd(sensor.uniqueId());
 
-        //data()[sensor.uniqueId()] = QString("%1.%2").arg(inst).arg(sens).toDouble();
-
         switch (sensor.type()) {
         case SensorDataType::SHORT:
             data()[sensor.uniqueId()] = sensorValue(generateRandom<short>(), sensor.scalingFactor());
