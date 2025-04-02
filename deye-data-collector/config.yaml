@@ -63,5 +63,5 @@ image: "ghcr.io/pr4u4t/deye-qt"
 data_dir: /data/${INSTANCE}
 
 # Add ports configuration (critical for GUI instance management)
-ports:
-  "8080/tcp": "${http_port}"
+#ports:
+#  "8080/tcp": "${http_port}"
