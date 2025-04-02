@@ -48,6 +48,7 @@ Deye::Deye(const Settings& settings, QObject* parent)
 }
 
 Deye::~Deye(){
+    qDebug() << "Deye::~Deye()";
     if(m_modbusDevice){
         m_modbusDevice->disconnectDevice();
         delete m_modbusDevice;
