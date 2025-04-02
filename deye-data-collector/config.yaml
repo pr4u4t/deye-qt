@@ -1,19 +1,11 @@
 name: "Deye Data Collector"
-version: "1.5.0"
+version: "1.5.1"
 slug: "voltron_deye"
 description: "Collects data from Deye inverters via serial Modbus and exposes it via REST API."
 url: "https://github.com/pr4u4t/deye-qt"
 startup: "application"
 boot: "auto"
 documentation_url: "https://github.com/pr4u4t/deye-qt/blob/main/deye-data-collector/DOCS.md"
-init: false
-hassio_api: true
-hassio_role: "default"
-host_network: false
-apparmor: true
-map: []
-host_dbus: false
-allow_multiple_instances: true
 uart: true
 services:
   - mqtt:need
@@ -21,7 +13,7 @@ arch:
   - aarch64
   - amd64
 options:
-  instance_name: "deye"  # Default instance name
+  instance_name: "Deye Instance 1"
   device: "/dev/ttyUSB0"
   baud: 9600
   parity: "none"
@@ -33,35 +25,36 @@ options:
   http_server: false
   interval: 5000
   driver: "deye"
+  ports: false
   mqtt_user: "user"
   mqtt_password: "password"
   mqtt_host: "core-mosquitto"
   mqtt_port: 1883
 schema:
   instance_name: "str"
-  device: "device(subsystem=tty)"  # Better device selector
+  device: "str"
   baud: "int"
-  parity: "list(none|odd|even)"
+  parity: "str"
   data_bits: "int"
   stop_bits: "int"
   response_time: "int"
   number_of_retries: "int"
-  http_port: "port"  # Use port type for validation
+  http_port: "int"
   http_server: "bool"
   interval: "int"
   driver: "str"
+  ports: "bool"
   mqtt_user: "str"
-  mqtt_password: "password"
+  mqtt_password: "str"
   mqtt_host: "str"
-  mqtt_port: "port"
+  mqtt_port: "int"
 privileged:
   - SYS_RAWIO
   - SYS_ADMIN
+map:
+  - config
 devices:
   - "/dev:/dev:rwm"
-ingress: false
+ingress: true
 image: "ghcr.io/pr4u4t/deye-qt"
-ports:
-  "8080/tcp": "8080"
-ports_description:
-  "8080/tcp": "HTTP API port (customize per instance)"
+data_dir: /data/${INSTANCE}

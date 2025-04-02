@@ -56,6 +56,7 @@ Deye::~Deye(){
 }
 
 bool Deye::connectDevice(){
+    qDebug() << "bool Deye::connectDevice()";
     if (!m_modbusDevice->connectDevice()) {
         qDebug() << QString("Connect failed: %1").arg(m_modbusDevice->errorString());
         return false;
