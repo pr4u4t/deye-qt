@@ -22,6 +22,8 @@ public:
         m_client->setPort(settings.mqttPort());
         m_client->setUsername(settings.mqttUser());
         m_client->setPassword(settings.mqttPassword());
+        m_client->setClientId("deye-inverter-addon-" + settings.instance().replace(" ", "-").toLower());
+        m_client->setProtocolVersion(QMqttClient::MQTT_3_1_1);
     }
 
     ~MqttClient() override = default;
@@ -31,13 +33,6 @@ public:
             qDebug() << "Failed to create mqtt client";
             return false;
         }
-
-        m_client->setHostname(settings().mqttHost());  // HA Mosquitto broker
-        m_client->setUsername(settings().mqttUser());
-        m_client->setPassword(settings().mqttPassword());
-        m_client->setPort(settings().mqttPort());
-        m_client->setClientId("deye-inverter-addon-" + settings().instance().replace(" ","-").toLower());
-        m_client->setProtocolVersion(QMqttClient::MQTT_3_1_1);
 
         QObject::connect(m_client, &QMqttClient::connected, []() {
             qDebug() << "MQTT Connected!";
