@@ -1,5 +1,5 @@
 name: "Deye Data Collector"
-version: "1.4.7"
+version: "1.4.8"
 slug: "voltron_deye"
 description: "Collects data from Deye inverters via serial Modbus and exposes it via REST API."
 url: "https://github.com/pr4u4t/deye-qt"
@@ -7,6 +7,9 @@ startup: "application"
 boot: "auto"
 documentation_url: "https://github.com/pr4u4t/deye-qt/blob/main/deye-data-collector/DOCS.md"
 allow_multiple_instances: true
+uart: true
+services:
+  - mqtt:need
 arch:
   - aarch64
   - amd64

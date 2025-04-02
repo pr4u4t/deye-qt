@@ -262,35 +262,6 @@ void Deye::updateSensor(const Sensor &sensor, const QModbusDataUnit& unit) {
             data()[sensor.uniqueId()] = sensorValue(static_cast<qint16>(unit.value(0)), static_cast<qint16>(unit.value(1)), sensor.scalingFactor());
             break;
     }
-
-    /*if (m_client) {
-        //if (!m_client || m_client->state() != QMqttClient::Connected) {
-        //    qWarning() << "MQTT client not connected!";
-        //    return;
-        //}
-
-        qDebug() << "mqtt client found updating sensor value";
-        const QString topic = "deye/sensor/" + sensor.topicSuffix + "/state";
-        qDebug() << "publishing" << topic << " value: " <<  QByteArray::number(sensor.data, 'f', 2);
-
-        m_client->publish(
-            QMqttTopicName(topic),
-            QByteArray::number(sensor.data, 'f', 2),  // 2 decimal places
-            1,  // QoS 1
-            true
-        );
-    } else {
-        qDebug() << "mqtt client not found"; 
-    }
-    */
-
-    //if(m_model){
-    //    qDebug() << "model found updating sensor value";
-        //(*m_model)[sensor.topicSuffix] = sensor.data;
-    // = sensor.data();
-    //} else {
-    //    qDebug() << "model not found";
-    //}
 }
 
 void Deye::disconnectDevice() {
