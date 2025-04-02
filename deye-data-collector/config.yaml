@@ -6,6 +6,13 @@ url: "https://github.com/pr4u4t/deye-qt"
 startup: "application"
 boot: "auto"
 documentation_url: "https://github.com/pr4u4t/deye-qt/blob/main/deye-data-collector/DOCS.md"
+init: false
+hassio_api: true
+hassio_role: "default"
+host_network: false
+apparmor: true
+map: []
+host_dbus: false
 allow_multiple_instances: true
 uart: true
 services:
