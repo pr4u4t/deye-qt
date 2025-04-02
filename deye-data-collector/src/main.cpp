@@ -218,11 +218,11 @@ int main(int argc, char** argv){
 
     parser.process(app);
 
+    load_settings(config, parser);
+
     if (config.ports() == true) {
         serial_port_dump();
     }
-
-    load_settings(config, parser);
 
     set_logger_verbosity(config);
     
