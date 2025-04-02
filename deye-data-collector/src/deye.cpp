@@ -3,6 +3,7 @@
 Deye::Deye(const Settings& settings, QObject* parent)
     : Inverter(settings, "Deye", "LP")
     , m_modbusDevice(new QModbusRtuSerialClient(parent)){
+	qDebug() << "Deye::Deye(const Settings& settings, QObject* parent)";
     if(m_modbusDevice == nullptr){
         qDebug() << "Failed to create modbus device";
         return;
