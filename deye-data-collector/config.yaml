@@ -13,10 +13,8 @@ services:
 arch:
   - aarch64
   - amd64
-
-# Critical changes below for multi-instance support
 options:
-  instance_name: "Deye Instance ${INSTANCE}"  # Dynamic instance naming
+  instance_name: "deye"  # Default instance name
   device: "/dev/ttyUSB0"
   baud: 9600
   parity: "none"
@@ -24,7 +22,7 @@ options:
   stop_bits: 1
   response_time: 1000
   number_of_retries: 3
-  http_port: 8080  # Users will override this per instance
+  http_port: 8080
   http_server: false
   interval: 5000
   driver: "deye"
@@ -32,36 +30,31 @@ options:
   mqtt_password: "password"
   mqtt_host: "core-mosquitto"
   mqtt_port: 1883
-
 schema:
   instance_name: "str"
-  device: "str"     # Users input unique devices (e.g., /dev/ttyUSB0, /dev/ttyUSB1)
+  device: "device(subsystem=tty)"  # Better device selector
   baud: "int"
-  parity: "str"
-  data_bits: "int"
-  stop_bits: "int"
+  parity: "list(none|odd|even)"
+  data_bits: "int(7|8)"
+  stop_bits: "int(1|2)"
   response_time: "int"
   number_of_retries: "int"
-  http_port: "int"  # Users must set unique ports (e.g., 8080, 8081)
+  http_port: "port"  # Use port type for validation
   http_server: "bool"
   interval: "int"
   driver: "str"
   mqtt_user: "str"
-  mqtt_password: "str"
+  mqtt_password: "password"
   mqtt_host: "str"
-  mqtt_port: "int"
-
+  mqtt_port: "port"
 privileged:
   - SYS_RAWIO
   - SYS_ADMIN
-
-# Remove 'map: - config' (not needed for multi-instance)
 devices:
   - "/dev:/dev:rwm"
-ingress: false  # Disable ingress for multi-instance compatibility
+ingress: false
 image: "ghcr.io/pr4u4t/deye-qt"
-data_dir: /data/${INSTANCE}
-
-# Add ports configuration (critical for GUI instance management)
-#ports:
-#  "8080/tcp": "${http_port}"
+ports:
+  "8080/tcp": "8080"
+ports_description:
+  "8080/tcp": "HTTP API port (customize per instance)"
