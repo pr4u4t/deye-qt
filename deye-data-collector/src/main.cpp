@@ -25,6 +25,8 @@ bool config_load(const QString &path, QJsonObject &config) {
     QByteArray data = file.readAll();
     file.close();
 
+	qDebug() << "Config contents: " << data;
+
     QJsonDocument doc = QJsonDocument::fromJson(data);
     if (!doc.isObject()) {
         qWarning() << "Invalid JSON format in config file.";
