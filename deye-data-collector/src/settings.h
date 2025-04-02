@@ -22,7 +22,7 @@ struct SettingsPrivate : public QSharedData {
     QString m_mqttHost = "core-mosquitto";
     qint16 m_mqttPort = 1883;
     QString m_mqttUser = "homeassistant";
-    QString m_mqttPassword = "YieVi1aeceoruavoo6io6uChaeD2looweil5aishooshoh7dan4ahreeYa1eal4o";
+    QString m_mqttPassword = "password";
     QString m_driver = "Deye";
     int m_verbosity = 1;
     bool m_loop = false;
@@ -144,6 +144,18 @@ public:
         if (hasValue(source, "mqtt_client") == true) {
             setMqttClient(toBool(source.value("mqtt_client")));
         }
+
+		if (hasValue(source, "mqtt_host") == true) {
+			setMqttHost(convert(source.value("mqtt_host")));
+		}
+
+        if (hasValue(source, "mqtt_user") == true) {
+            setMqttUser(convert(source.value("mqtt_user")));
+        }
+
+		if (hasValue(source, "mqtt_password") == true) {
+			setMqttPassword(convert(source.value("mqtt_password")));
+		}
     }
 
     QString device() const { return m_d->m_device; }
@@ -191,18 +203,27 @@ public:
     QString toString() const {
         return QString(
             "Settings(\n"
-            "device: %1,\n"
-            "parity: %2,\n"
-            "instance: %3,\n"
-            "baud: %4,\n"
-            "data_bits: %5,\n"
-            "stop_bits: %6,\n"
-            "response_time: %7,\n"
-            "number_of_retries: %8,\n"
-            "listen: %9,\n"
-            "interval: %10,\n"
-            "http_server: %11,\n"
-            "mqtt_client: %12\n)"
+            "  device: %1,\n"
+            "  parity: %2,\n"
+            "  instance: %3,\n"
+            "  baud: %4,\n"
+            "  data_bits: %5,\n"
+            "  stop_bits: %6,\n"
+            "  response_time: %7,\n"
+            "  number_of_retries: %8,\n"
+            "  listen: %9,\n"
+            "  interval: %10,\n"
+            "  http_server: %11,\n"
+            "  mqtt_client: %12,\n"
+            "  mqtt_host: %13,\n"
+            "  mqtt_port: %14,\n"
+            "  mqtt_user: %15,\n"
+            "  mqtt_password: [hidden],\n"  // Masked for security
+            "  driver: %16,\n"
+            "  verbosity: %17,\n"
+            "  loop: %18,\n"
+            "  ports: %19\n"
+            ")"
         )
             .arg(m_d->m_device)
             .arg(m_d->m_parity)
@@ -214,8 +235,16 @@ public:
             .arg(m_d->m_numberOfRetries)
             .arg(m_d->m_listen)
             .arg(m_d->m_interval)
-            .arg(m_d->m_httpserver)
-            .arg(m_d->m_mqttclient);
+            .arg(m_d->m_httpserver ? "true" : "false")  // Convert bool to string
+            .arg(m_d->m_mqttclient ? "true" : "false")
+            .arg(m_d->m_mqttHost)
+            .arg(m_d->m_mqttPort)
+            .arg(m_d->m_mqttUser)
+            // Skip password in output for security
+            .arg(m_d->m_driver)
+            .arg(m_d->m_verbosity)
+            .arg(m_d->m_loop ? "true" : "false")
+            .arg(m_d->m_ports ? "true" : "false");
     }
 
     // QDebug output support

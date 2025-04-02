@@ -37,7 +37,7 @@ bool config_load(const QString &path, QJsonObject &config) {
 }
 
 void serial_port_dump(){
-    qDebug() << "void SerialPort_dump()";
+    qDebug() << "void serial_port_dump()";
     const auto serialPortInfos = QSerialPortInfo::availablePorts();
     for (const QSerialPortInfo &portInfo : serialPortInfos) {
         qDebug() << "\n"
@@ -101,6 +101,9 @@ void setup_parser(QCommandLineParser& parser) {
     parser.addOption({ {"g", "driver"}, "Driver to use <Deye|Dummy>", "driver" });
     parser.addOption({ {"o", "loop"}, "Whether to execute reading in loop <true|false>", "loop" });
     parser.addOption({ {"k", "ports"}, "Whether to list local modbus ports <true|false>", "ports" });
+    parser.addOption({ {"z", "mqtt_host"}, "MQTT broker hostname or IP address", "mqtt_host" });
+    parser.addOption({ {"u", "mqtt_user"}, "Username for MQTT authentication", "mqtt_user" });
+    parser.addOption({ {"w", "mqtt_password"}, "Password for MQTT authentication", "mqtt_password" });
 }
 
 void load_settings(Settings& settings, const QCommandLineParser& parser) {

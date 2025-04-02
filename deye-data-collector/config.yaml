@@ -1,5 +1,5 @@
 name: "Deye Data Collector"
-version: "1.4.2"
+version: "1.4.3"
 slug: "voltron_deye"
 description: "Collects data from Deye inverters via serial Modbus and exposes it via REST API."
 url: "https://github.com/pr4u4t/deye-qt"
@@ -23,6 +23,9 @@ options:
   interval: 5000
   driver: "deye"
   ports: false
+  mqtt_user: "user"
+  mqtt_password: "password"
+  mqtt_host: "core-mosquitto"
 schema:
   instance_name: "str"
   device: "str"
@@ -37,6 +40,9 @@ schema:
   interval: "int"
   driver: "str"
   ports: "bool"
+  mqtt_user: "str"
+  mqtt_password: "str"
+  mqtt_host: "str"
 privileged:
   - SYS_RAWIO
   - SYS_ADMIN
