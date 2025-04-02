@@ -35,8 +35,8 @@ schema:
   device: "device(subsystem=tty)"  # Better device selector
   baud: "int"
   parity: "list(none|odd|even)"
-  data_bits: "int(7|8)"
-  stop_bits: "int(1|2)"
+  data_bits: "int"
+  stop_bits: "int"
   response_time: "int"
   number_of_retries: "int"
   http_port: "port"  # Use port type for validation
