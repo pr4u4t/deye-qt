@@ -1,8 +1,7 @@
 #include "mqttclient.h"
 
 MqttClient::MqttClient(const Settings& settings, QObject* parent)
-    : QObject(parent)
-    , Output(settings)
+    : Output(settings)
     , m_client(new QMqttClient(this)){
     
 
@@ -71,9 +70,9 @@ void MqttClient::update(const QJsonObject& report) {
     const auto& sensors = inv->sensors();
 	const auto instance = inv->settings().instance();
 
-    if (m_published == false) {
+    if (m_init.contains(instance) == false) {
         publishAutoDiscovery(sensors, instance);
-        m_published = true;
+		m_init.insert(instance, true);
     }
 
     for (const auto& sensor : sensors) {

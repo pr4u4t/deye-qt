@@ -5,7 +5,8 @@
 
 #include "settings.h"
 
-class Output {
+class Output : public QObject{
+    Q_OBJECT
 public:
     Output(const Settings& settings)
         : m_settings(settings) {}

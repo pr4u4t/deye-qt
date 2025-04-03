@@ -3,10 +3,49 @@
 
 #include <QCommandLineParser>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QSharedData>
 #include <QSharedDataPointer>
 
 struct InverterSettings {
+    InverterSettings(const QJsonObject& inv) {
+        if (inv.contains("device")) {
+			m_device = inv.value("device").toString();
+        }
+
+        if (inv.contains("parity")) {
+			m_parity = inv.value("parity").toString();
+        }
+
+        if (inv.contains("instance")) {
+			m_instance = inv.value("instance").toString();
+        }
+
+        if (inv.contains("baud")) {
+			m_baud = inv.value("baud").toInt();
+        }
+
+        if (inv.contains("data_bits")) {
+			m_dataBits = inv.value("data_bits").toInt();
+        }
+
+        if (inv.contains("stop_bits")) {
+			m_stopBits = inv.value("stop_bits").toInt();
+        }
+
+        if (inv.contains("response_time")) {
+			m_responseTime = inv.value("response_time").toInt();
+        }
+
+        if (inv.contains("number_of_retries")) {
+			m_numberOfRetries = inv.value("number_of_retries").toInt();
+        }
+
+        if (inv.contains("driver")) {
+			m_driver = inv.value("driver").toString();
+        }
+    }
+
     QString m_device = "/dev/ttyUSB0";
     QString m_parity = "none";
     QString m_instance = "Instance 1";
@@ -36,10 +75,55 @@ struct InverterSettings {
     void setResponseTime(int responseTime) { m_responseTime = responseTime; }
     void setNumberOfRetries(int numberOfRetries) { m_numberOfRetries = numberOfRetries; }
     void setDriver(const QString& driver) { m_driver = driver; }
+
+    // toString method to convert the struct to a readable string
+    QString toString() const {
+        return QString("InverterSettings {\n"
+            "  instance: %1\n"
+            "  device: %2\n"
+            "  driver: %3\n"
+            "  baud: %4\n"
+            "  parity: %5\n"
+            "  dataBits: %6\n"
+            "  stopBits: %7\n"
+            "  responseTime: %8\n"
+            "  numberOfRetries: %9\n"
+            "}")
+            .arg(m_instance)
+            .arg(m_device)
+            .arg(m_driver)
+            .arg(m_baud)
+            .arg(m_parity)
+            .arg(m_dataBits)
+            .arg(m_stopBits)
+            .arg(m_responseTime)
+            .arg(m_numberOfRetries);
+    }
+
+    // Convert to QJsonObject
+    QJsonObject toJsonObject() const {
+        QJsonObject obj;
+        obj["instance"] = m_instance;
+        obj["device"] = m_device;
+        obj["driver"] = m_driver;
+        obj["baud"] = m_baud;
+        obj["parity"] = m_parity;
+        obj["data_bits"] = m_dataBits;
+        obj["stop_bits"] = m_stopBits;
+        obj["response_time"] = m_responseTime;
+        obj["number_of_retries"] = m_numberOfRetries;
+        return obj;
+    }
+
+    // QDebug output support
+    friend QDebug operator<<(QDebug debug, const InverterSettings& settings) {
+        debug.nospace().noquote() << settings.toString();
+        return debug;
+    }
 };
 
 struct SettingsPrivate : public QSharedData {
-    QList<InverterSettings> m_inverters;
+    QVector<InverterSettings> m_inverters;
     int m_listen = 8080;
     int m_interval = 5000;
     bool m_httpserver = false;
@@ -51,6 +135,41 @@ struct SettingsPrivate : public QSharedData {
     int m_verbosity = 1;
     bool m_loop = false;
     bool m_ports = false;
+
+    QString toString() const {
+        QString result = QString("SettingsPrivate {\n");
+
+        // Add inverters information
+        result += QString("  Inverters (%1):\n").arg(m_inverters.size());
+        for (int i = 0; i < m_inverters.size(); ++i) {
+            QString inverterStr = m_inverters[i].toString();
+            // Indent each line of the inverter string with two additional spaces
+            inverterStr.replace("\n", "\n    ");
+            result += QString("    Inverter %1: %2\n").arg(i + 1).arg(inverterStr);
+        }
+
+        // Add other settings
+        result += QString("  HTTP Server: %1\n").arg(m_httpserver ? "enabled" : "disabled");
+        result += QString("  HTTP Port: %1\n").arg(m_listen);
+        result += QString("  Polling Interval: %1 ms\n").arg(m_interval);
+        result += QString("  MQTT Client: %1\n").arg(m_mqttclient ? "enabled" : "disabled");
+        result += QString("  MQTT Host: %1\n").arg(m_mqttHost);
+        result += QString("  MQTT Port: %1\n").arg(m_mqttPort);
+        result += QString("  MQTT User: %1\n").arg(m_mqttUser);
+        result += QString("  MQTT Password: %1\n").arg(m_mqttPassword.isEmpty() ? "[not set]" : "********");
+        result += QString("  Verbosity Level: %1\n").arg(m_verbosity);
+        result += QString("  Loop Mode: %1\n").arg(m_loop ? "enabled" : "disabled");
+        result += QString("  Show Ports: %1\n").arg(m_ports ? "enabled" : "disabled");
+
+        result += "}";
+        return result;
+    }
+
+    // QDebug output support
+    friend QDebug operator<<(QDebug debug, const SettingsPrivate& settings) {
+        debug.nospace().noquote() << settings.toString();
+        return debug;
+    }
 };
 
 
@@ -80,6 +199,8 @@ public:
         });
     }
 
+    const QVector<InverterSettings>& inverters() const { return m_d->m_inverters; }
+
     //void fillFromCmd(const QCommandLineParser& parser){
     //    fill<QCommandLineParser>(parser, [](const QCommandLineParser& source, const QString& key){
     //        return source.isSet(key) == true;
@@ -105,39 +226,27 @@ public:
 
     template<typename T>
     void fill(const T& source, const std::function<bool (const T&, const QString&)>& hasValue){
-        /*
-        if(hasValue(source, "device") == true){
-            setDevice(convert(source.value("device")));
+        if (!source.contains("inverters") || !source["inverters"].isArray()) {
+            qDebug() << "Object doesn't contain an array with key: inverters";
+            return;
         }
 
-        if(hasValue(source, "parity") == true){
-            setParity(convert(source.value("parity")));
-        }
+        // Get the JSON array
+        QJsonArray jsonArray = source["inverters"].toArray();
 
-        if(hasValue(source, "instance") == true){
-            setInstance(convert(source.value("instance")));
-        }
+        for (int i = 0; i < jsonArray.size(); ++i) {
+            // Process each element
+            QJsonValue value = jsonArray[i];
 
-        if(hasValue(source, "baud") == true){
-            setBaud(source.value("baud").toInt());
+            // Handle different value types
+            if (value.isObject()) {
+                QJsonObject obj = value.toObject();
+                qDebug() << "Object at index" << i << ":" << obj;
+				m_d->m_inverters.push_back(InverterSettings(obj));
+            } else {
+				qWarning() << "Element at index" << i << "is not an object.";
+            }
         }
-
-        if(hasValue(source, "data_bits") == true){
-            setDataBits(source.value("data_bits").toInt());
-        }
-
-        if(hasValue(source, "stop_bits") == true){
-            setStopBits(source.value("stop_bits").toInt());
-        }
-
-        if(hasValue(source, "response_time") == true){
-            setResponseTime(source.value("response_time").toInt());
-        }
-
-        if(hasValue(source, "number_of_retries") == true){ 
-           setNumberOfRetries(source.value("number_of_retries").toInt());
-        }
-        */
 
         if(hasValue(source, "listen") == true){
             setListen(source.value("listen").toInt());
@@ -146,10 +255,6 @@ public:
         if(hasValue(source, "interval") == true){
             setInterval(source.value("interval").toInt());
         }
-
-        //if (hasValue(source, "driver") == true) {
-        //    setDriver(convert(source.value("driver")));
-        //}
 
         if (hasValue(source, "verbosity") == true) {
             setVerbosity(source.value("verbosity").toInt());
@@ -211,32 +316,7 @@ public:
     void setPorts(bool ports) { m_d->m_ports = ports; }
 
     QString toString() const {
-        return QString(
-            "Settings(\n"
-            "  listen: %1,\n"
-            "  interval: %2,\n"
-            "  http_server: %3,\n"
-            "  mqtt_client: %4,\n"
-            "  mqtt_host: %5,\n"
-            "  mqtt_port: %6,\n"
-            "  mqtt_user: %7,\n"
-            "  mqtt_password: [hidden],\n"  // Masked for security
-            "  verbosity: %8,\n"
-            "  loop: %9,\n"
-            "  ports: %10\n"
-            ")"
-            )
-            .arg(m_d->m_listen)
-            .arg(m_d->m_interval)
-            .arg(m_d->m_httpserver ? "true" : "false")  // Convert bool to string
-            .arg(m_d->m_mqttclient ? "true" : "false")
-            .arg(m_d->m_mqttHost)
-            .arg(m_d->m_mqttPort)
-            .arg(m_d->m_mqttUser)
-            // Skip password in output for security
-            .arg(m_d->m_verbosity)
-            .arg(m_d->m_loop ? "true" : "false")
-            .arg(m_d->m_ports ? "true" : "false");
+        return m_d->toString();
     }
 
     // QDebug output support

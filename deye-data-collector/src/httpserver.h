@@ -10,14 +10,12 @@
 #include "settings.h"
 #include "inverter.h"
 
-class HttpServer : public QObject
-                 , public Output {
+class HttpServer : public Output {
     Q_OBJECT
 
 public:
     HttpServer(const Settings& settings, QObject* parent = nullptr)
-        : QObject(parent)
-        , Output(settings)
+        : Output(settings)
         , m_server(new QHttpServer(this))
         , m_tcpserver(new QTcpServer(this)){
     }

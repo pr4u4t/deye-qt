@@ -121,17 +121,12 @@ void load_settings(Settings& settings, const QCommandLineParser& parser) {
         if (config_load(conf, cnf) == true) {
             settings.fillFromJson(cnf);
             qDebug() << "Configuration from file: " << settings;
-        }
-        else {
+        } else {
             qDebug() << "Configuration file not found: " << settings;
         }
-    }
-    else {
+    } else {
         qDebug() << "Configuration file path empty";
     }
-
-    //settings.fillFromCmd(parser);
-    //qDebug() << "Configuration after cmd: " << settings;
 }
 
 void set_logger_verbosity(const Settings& settings) {
@@ -212,7 +207,7 @@ int main(int argc, char** argv){
 	QVector<Inverter*> invs;
 
     qDebug() << "***************************************************************";
-    qDebug() << "*                  STARTING INVERTER                          *";
+    qDebug() << "*                  STARTING INVERTERS                         *";
     qDebug() << "***************************************************************";
 
     QCoreApplication app(argc, argv);
@@ -233,25 +228,60 @@ int main(int argc, char** argv){
 
     set_logger_verbosity(config);
     
-    //auto inv = choose_driver(config);
+	for (const auto& set : config.inverters()) {
+		auto inv = choose_driver(set);
+		if (inv == nullptr) {
+			qCritical() << "Failed to create Inverter instance... quitting";
+			continue;
+		}
 
-    /*
-    if(inv == nullptr){
-        qCritical() << "Failed to create Inverter instance... quitting";
-        return 1;
+		if (inv->connectDevice() == false) {
+			qCritical() << "Failed to connect to inverter... quitting";
+			continue;
+		}
+		invs.push_back(inv);
     }
 
-    if (!inv->connectDevice() == true) {
-        qCritical() << "Failed to connect to inverter... quitting";
-        return 2;
+	if (invs.size() == 0) {
+		qCritical() << "No inverters found... quitting";
+		return 1;
+	}
+    
+    if (config.httpserver()) {
+        auto server = new HttpServer(config);
+        if (server->init() == false) {
+            qCritical() << "Failed to start http server";
+            return 2;
+        }
+        outputs.push_back(server);
     }
 
-    if(config.loop() == false) {
-        single_run(inv, config, timer, outputs);
-    } else {
-        loop_run(inv, config, timer, outputs);
+    if (config.mqttclient()) {
+        auto mqtt = new MqttClient(config);
+        if (mqtt->init() == false) {
+            qCritical() << "Failed to start mqtt client";
+            return 3;
+        }
+
+        outputs.push_back(mqtt);
     }
-    */
+
+    for (int i = 0; i < invs.size(); ++i) {
+        for (int j = 0; j < outputs.size(); ++j) {
+			QObject::connect(invs[i], &Inverter::reportReady, outputs[j], &Output::update);
+        }
+    }
+
+    timer.setInterval(config.interval());
+
+    QObject::connect(&timer, &QTimer::timeout, [invs]() {
+        qDebug() << "Report:" << QDateTime::currentDateTime().toString();
+        for (int i = 0; i < invs.size(); ++i) {
+            invs[i]->readReport();
+        }
+    });
+    
+    timer.start();
 
     return app.exec();
 }

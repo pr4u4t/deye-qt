@@ -1,0 +1,35 @@
+{
+  "inverters": [
+    {
+      "instance": "Inverter 1",
+      "device": "/dev/ttyUSB0",
+      "baud": 9600,
+      "parity": "none",
+      "data_bits": 8,
+      "stop_bits": 1,
+      "response_time": 1000,
+      "number_of_retries": 3,
+      "driver": "dummy",
+      "interval": 5000
+    },
+    {
+      "instance": "Inverter 2",
+      "device": "/dev/ttyUSB1",
+      "baud": 9600,
+      "parity": "none",
+      "data_bits": 8,
+      "stop_bits": 1,
+      "response_time": 1000,
+      "number_of_retries": 3,
+      "driver": "dummy",
+      "interval": 5000
+    }
+  ],
+  "http_server": true,
+  "http_port": 8080,
+  "mqtt_client": false,
+  "mqtt_user": "deye",
+  "mqtt_password": "dupa",
+  "mqtt_host": "core-mosquitto",
+  "mqtt_port": 1883
+}

@@ -38,12 +38,12 @@
     <QtMoc Include="src\dummy.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="src\output.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\output.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\settings.h">

@@ -101,7 +101,7 @@
     <QtMoc Include="src\inverter.h" />
     <QtMoc Include="src\dummy.h" />
     <ClInclude Include="src\main.h" />
-    <ClInclude Include="src\output.h" />
+    <QtMoc Include="src\output.h" />
     <ClInclude Include="src\settings.h" />
     <ClInclude Include="src\utils.h" />
     <QtMoc Include="src\mqttclient.h" />

@@ -4,13 +4,13 @@
 #include <QMqttClient>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QHash>
 
 #include "inverter.h"
 #include "settings.h"
 #include "output.h"
 
-class MqttClient : public QObject
-                 , public Output {
+class MqttClient : public Output {
     Q_OBJECT
 public:
 
@@ -30,7 +30,7 @@ private:
 private:
     QMqttClient* m_client = nullptr;
     Settings m_settings;
-    bool m_published = false;
+    QHash<QString, bool> m_init;
 };
 
 #endif // MQTTCLIENT_H
