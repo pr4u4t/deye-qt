@@ -6,6 +6,7 @@ url: "https://github.com/pr4u4t/deye-qt"
 startup: "application"
 boot: "auto"
 documentation_url: "https://github.com/pr4u4t/deye-qt/blob/main/deye-data-collector/DOCS.md"
+logo: "logo.png"
 uart: true
 services:
   - mqtt:need
